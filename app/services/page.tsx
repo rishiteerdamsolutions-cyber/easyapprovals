@@ -1,0 +1,137 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { services, serviceCategories, getServicesByCategory, searchServices } from '@/lib/services-data';
+import { Search, Filter } from 'lucide-react';
+
+export default function ServicesPage() {
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredServices, setFilteredServices] = useState(services);
+
+  useEffect(() => {
+    let result = services;
+
+    if (selectedCategory !== 'all') {
+      result = getServicesByCategory(selectedCategory);
+    }
+
+    if (searchQuery) {
+      result = searchServices(searchQuery).filter(s => 
+        selectedCategory === 'all' || s.category === selectedCategory
+      );
+    }
+
+    setFilteredServices(result);
+  }, [selectedCategory, searchQuery]);
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-12 px-4">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Our Services</h1>
+          <p className="text-xl text-gray-600">
+            Complete compliance solutions for your business
+          </p>
+        </div>
+
+        {/* Search and Filter */}
+        <div className="mb-8 flex flex-col md:flex-row gap-4">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+            <input
+              type="text"
+              placeholder="Search services..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <Filter className="text-gray-400 h-5 w-5" />
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            >
+              <option value="all">All Categories</option>
+              {serviceCategories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Services Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredServices.map((service) => (
+            <Link
+              key={service.id}
+              href={`/services/${service.slug}`}
+              className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow"
+            >
+              <div className="flex justify-between items-start mb-4">
+                <h3 className="text-lg font-semibold text-gray-900 flex-1">
+                  {service.name}
+                </h3>
+                {service.popular && (
+                  <span className="bg-primary-100 text-primary-700 text-xs font-semibold px-2 py-1 rounded">
+                    Popular
+                  </span>
+                )}
+              </div>
+              <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                {service.description}
+              </p>
+              <div className="flex justify-between items-center pt-4 border-t">
+                <div>
+                  <div className="text-primary-600 font-bold text-lg">
+                    ₹{service.basePrice.toLocaleString()}
+                  </div>
+                  {service.governmentFee > 0 && (
+                    <div className="text-xs text-gray-500">
+                      + ₹{service.governmentFee.toLocaleString()} govt. fees
+                    </div>
+                  )}
+                </div>
+                <div className="text-sm text-gray-500">
+                  {service.processingTime}
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        {filteredServices.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">No services found matching your criteria.</p>
+          </div>
+        )}
+
+        {/* Stats */}
+        <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="bg-white p-6 rounded-lg shadow text-center">
+            <div className="text-3xl font-bold text-primary-600">{services.length}+</div>
+            <div className="text-gray-600 mt-2">Services</div>
+          </div>
+          <div className="bg-white p-6 rounded-lg shadow text-center">
+            <div className="text-3xl font-bold text-primary-600">{serviceCategories.length}</div>
+            <div className="text-gray-600 mt-2">Categories</div>
+          </div>
+          <div className="bg-white p-6 rounded-lg shadow text-center">
+            <div className="text-3xl font-bold text-primary-600">99%</div>
+            <div className="text-gray-600 mt-2">Success Rate</div>
+          </div>
+          <div className="bg-white p-6 rounded-lg shadow text-center">
+            <div className="text-3xl font-bold text-primary-600">24/7</div>
+            <div className="text-gray-600 mt-2">Support</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+

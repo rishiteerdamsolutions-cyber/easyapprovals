@@ -33,7 +33,7 @@ export default function ContactPage() {
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>
           <p className="text-xl text-gray-600">
-            Get in touch with our team. We're here to help!
+            Get in touch with our team. We&apos;re here to help!
           </p>
         </div>
 
@@ -100,7 +100,7 @@ export default function ContactPage() {
                   <div className="text-green-600 text-4xl mb-4">✓</div>
                   <h3 className="text-lg font-semibold text-green-900 mb-2">Message Sent!</h3>
                   <p className="text-green-700">
-                    Thank you for contacting us. We'll get back to you within 24 hours.
+                    Thank you for contacting us. We&apos;ll get back to you within 24 hours.
                   </p>
                 </div>
               ) : (

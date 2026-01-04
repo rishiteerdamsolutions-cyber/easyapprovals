@@ -5,13 +5,20 @@ import { useState } from 'react';
 import { Menu, X, Search, User, LogOut, ChevronDown } from 'lucide-react';
 import { serviceCategories } from '@/lib/services-data';
 
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+}
+
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isServicesOpen, setIsServicesOpen] = useState(false);
 
   // Mock user - in real app, get from auth context
-  const user = null; // Set to null for now, will be connected to auth
+  const user: User | null = null; // Set to null for now, will be connected to auth
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
@@ -87,7 +94,7 @@ export default function Navbar() {
                   className="flex items-center space-x-2 text-gray-700 hover:text-primary-600"
                 >
                   <User className="h-5 w-5" />
-                  <span>{user.name || 'User'}</span>
+                  <span>{(user as User).name || 'User'}</span>
                 </button>
                 {isUserMenuOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1">

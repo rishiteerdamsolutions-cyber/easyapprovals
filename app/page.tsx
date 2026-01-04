@@ -12,7 +12,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-              India's Leading AI-Powered
+              India&apos;s Leading AI-Powered
               <br />
               <span className="text-primary-600">Corporate Services & Compliance Platform</span>
             </h1>

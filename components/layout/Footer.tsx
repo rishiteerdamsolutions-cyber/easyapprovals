@@ -19,7 +19,7 @@ export default function Footer() {
               <span className="text-xl font-bold">Easy Approval</span>
             </div>
             <p className="text-gray-400 text-sm">
-              India's leading AI-powered corporate services and compliance platform.
+              India&apos;s leading AI-powered corporate services and compliance platform.
             </p>
           </div>
 

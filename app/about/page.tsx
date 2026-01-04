@@ -9,7 +9,7 @@ export default function AboutPage() {
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">About Easy Approval</h1>
           <p className="text-xl opacity-90">
-            India's Leading AI-Powered Corporate Services & Compliance Platform
+            India&apos;s Leading AI-Powered Corporate Services & Compliance Platform
           </p>
         </div>
       </section>

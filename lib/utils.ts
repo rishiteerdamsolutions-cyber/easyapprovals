@@ -28,3 +28,5 @@ export function calculateTotal(serviceFee: number, governmentFee: number): numbe
   return subtotal + gst;
 }
 
+
+

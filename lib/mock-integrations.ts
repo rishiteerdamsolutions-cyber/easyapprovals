@@ -119,3 +119,5 @@ export const smsTemplates = {
   statusUpdate: (orderId: string, status: string) => `Your order ${orderId} status: ${status}. Check dashboard for details.`,
 };
 
+
+

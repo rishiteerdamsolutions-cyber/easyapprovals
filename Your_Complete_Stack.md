@@ -277,3 +277,5 @@ NEXTAUTH_URL=https://your-domain.vercel.app
 
 **Your stack is excellent and almost complete!** 🚀
 
+
+

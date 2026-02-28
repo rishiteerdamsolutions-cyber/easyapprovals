@@ -4,21 +4,34 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
+const ADMIN_TOKEN_KEY = 'adminToken';
+
 export default function AdminLoginPage() {
   const router = useRouter();
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     setIsLoading(true);
-
-    // Allow any password for demo
-    setTimeout(() => {
-      localStorage.setItem('adminAuth', 'true');
-      setIsLoading(false);
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Login failed');
+      localStorage.setItem(ADMIN_TOKEN_KEY, data.token);
       router.push('/admin');
-    }, 500);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -43,8 +56,22 @@ export default function AdminLoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                placeholder="admin@easyapproval.com"
+                required
+              />
+            </div>
+            <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Password (Any password for demo)
+                Password
               </label>
               <input
                 type="password"
@@ -52,11 +79,11 @@ export default function AdminLoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                placeholder="Enter any password"
+                placeholder="Enter password"
                 required
               />
             </div>
-
+            {error && <p className="text-red-600 text-sm">{error}</p>}
             <button
               type="submit"
               disabled={isLoading}
@@ -68,21 +95,14 @@ export default function AdminLoginPage() {
 
           <div className="mt-6 text-center">
             <Link
-              href="/login"
+              href="/"
               className="text-sm text-primary-600 hover:text-primary-700"
             >
-              ← Back to User Login
+              ← Back to Home
             </Link>
-          </div>
-
-          <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <p className="text-sm text-yellow-800">
-              <strong>Demo Mode:</strong> Enter any password to access the admin dashboard.
-            </p>
           </div>
         </div>
       </div>
     </div>
   );
 }
-

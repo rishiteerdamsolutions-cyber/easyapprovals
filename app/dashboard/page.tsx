@@ -3,75 +3,73 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { 
-  ShoppingCart, 
-  Clock, 
-  CheckCircle, 
-  FileText, 
+import {
+  ShoppingCart,
+  Clock,
+  CheckCircle,
+  FileText,
   DollarSign,
   TrendingUp,
-  ArrowRight
+  ArrowRight,
 } from 'lucide-react';
 
-// Mock data - in real app, fetch from API
-const mockOrders = [
-  {
-    id: 1,
-    service: 'GST Registration',
-    status: 'completed',
-    amount: 1500,
-    date: '2024-01-15',
-    orderNumber: 'ORD-001',
-  },
-  {
-    id: 2,
-    service: 'Company Registration',
-    status: 'processing',
-    amount: 6899,
-    date: '2024-01-20',
-    orderNumber: 'ORD-002',
-  },
-  {
-    id: 3,
-    service: 'Trademark Registration',
-    status: 'pending',
-    amount: 5999,
-    date: '2024-01-25',
-    orderNumber: 'ORD-003',
-  },
-];
+interface Order {
+  _id: string;
+  orderId: string;
+  orderStatus: string;
+  totalAmount: number;
+  services: { serviceName: string }[];
+  createdAt: string;
+}
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in
     const userData = localStorage.getItem('user');
     if (!userData) {
       router.push('/login');
       return;
     }
-    setUser(JSON.parse(userData));
+    try {
+      const u = JSON.parse(userData);
+      setUser(u);
+    } catch {
+      router.push('/login');
+    }
   }, [router]);
+
+  useEffect(() => {
+    if (!user?.email) return;
+    fetch(`/api/orders/by-email?email=${encodeURIComponent(user.email)}`)
+      .then((r) => r.json())
+      .then(setOrders)
+      .catch(() => setOrders([]))
+      .finally(() => setLoading(false));
+  }, [user?.email]);
 
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-600">Loading...</p>
-        </div>
+        <p className="text-gray-600">Loading...</p>
       </div>
     );
   }
 
   const stats = {
-    totalOrders: mockOrders.length,
-    pendingOrders: mockOrders.filter(o => o.status === 'pending').length,
-    processingOrders: mockOrders.filter(o => o.status === 'processing').length,
-    completedOrders: mockOrders.filter(o => o.status === 'completed').length,
-    totalSpent: mockOrders.reduce((sum, o) => sum + o.amount, 0),
+    totalOrders: orders.length,
+    pendingOrders: orders.filter((o) => ['payment_pending', 'documents_pending', 'documents_uploaded', 'in_review'].includes(o.orderStatus)).length,
+    processingOrders: orders.filter((o) => ['documents_uploaded', 'in_review'].includes(o.orderStatus)).length,
+    completedOrders: orders.filter((o) => ['approved', 'completed'].includes(o.orderStatus)).length,
+    totalSpent: orders.filter((o) => o.orderStatus !== 'payment_pending').reduce((sum, o) => sum + o.totalAmount, 0),
   };
+
+  const statusLabel = (s: string) =>
+    s === 'approved' || s === 'completed' ? 'completed' :
+    s === 'documents_uploaded' || s === 'in_review' ? 'processing' : 'pending';
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
@@ -83,7 +81,6 @@ export default function DashboardPage() {
           <p className="text-gray-600">Manage your orders and track compliance</p>
         </div>
 
-        {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center justify-between">
@@ -134,10 +131,29 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Quick Actions */}
         <div className="bg-white rounded-lg shadow p-6 mb-8">
           <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Link
+              href="/order"
+              className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <FileText className="h-5 w-5 text-primary-600" />
+                <span className="font-medium">Order Services</span>
+              </div>
+              <ArrowRight className="h-5 w-5 text-gray-400" />
+            </Link>
+            <Link
+              href="/track"
+              className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <ShoppingCart className="h-5 w-5 text-primary-600" />
+                <span className="font-medium">Track Order</span>
+              </div>
+              <ArrowRight className="h-5 w-5 text-gray-400" />
+            </Link>
             <Link
               href="/services"
               className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition-colors"
@@ -148,78 +164,61 @@ export default function DashboardPage() {
               </div>
               <ArrowRight className="h-5 w-5 text-gray-400" />
             </Link>
-            <Link
-              href="/dashboard/orders"
-              className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <ShoppingCart className="h-5 w-5 text-primary-600" />
-                <span className="font-medium">View All Orders</span>
-              </div>
-              <ArrowRight className="h-5 w-5 text-gray-400" />
-            </Link>
-            <Link
-              href="/dashboard/documents"
-              className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <FileText className="h-5 w-5 text-primary-600" />
-                <span className="font-medium">My Documents</span>
-              </div>
-              <ArrowRight className="h-5 w-5 text-gray-400" />
-            </Link>
           </div>
         </div>
 
-        {/* Recent Orders */}
         <div className="bg-white rounded-lg shadow">
           <div className="p-6 border-b">
-            <div className="flex justify-between items-center">
-              <h2 className="text-xl font-semibold">Recent Orders</h2>
-              <Link
-                href="/dashboard/orders"
-                className="text-primary-600 hover:text-primary-700 font-medium text-sm"
-              >
-                View All
-              </Link>
-            </div>
+            <h2 className="text-xl font-semibold">Recent Orders</h2>
           </div>
-          <div className="divide-y">
-            {mockOrders.map((order) => (
-              <div key={order.id} className="p-6 hover:bg-gray-50 transition-colors">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="font-semibold text-gray-900">{order.service}</h3>
-                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                        order.status === 'completed' ? 'bg-green-100 text-green-800' :
-                        order.status === 'processing' ? 'bg-blue-100 text-blue-800' :
-                        'bg-yellow-100 text-yellow-800'
-                      }`}>
-                        {order.status}
-                      </span>
+          {loading ? (
+            <div className="p-8 text-center text-gray-500">Loading orders...</div>
+          ) : orders.length === 0 ? (
+            <div className="p-8 text-center text-gray-500">
+              <p>No orders yet. Orders placed with {user.email} will appear here.</p>
+              <Link href="/order" className="text-primary-600 hover:underline mt-2 inline-block">Order Services</Link>
+            </div>
+          ) : (
+            <div className="divide-y">
+              {orders.map((order) => (
+                <div key={order._id} className="p-6 hover:bg-gray-50 transition-colors">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="font-semibold text-gray-900">
+                          {order.services?.map((s) => s.serviceName).join(', ') || 'Order'}
+                        </h3>
+                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                          statusLabel(order.orderStatus) === 'completed' ? 'bg-green-100 text-green-800' :
+                          statusLabel(order.orderStatus) === 'processing' ? 'bg-blue-100 text-blue-800' :
+                          'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {order.orderStatus}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600">Order #{order.orderId}</p>
+                      <p className="text-sm text-gray-500">
+                        {new Date(order.createdAt).toLocaleDateString()}
+                      </p>
                     </div>
-                    <p className="text-sm text-gray-600 mb-1">Order #{order.orderNumber}</p>
-                    <p className="text-sm text-gray-500">{order.date}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-lg font-bold text-gray-900">
-                      ₹{order.amount.toLocaleString()}
-                    </p>
-                    <Link
-                      href={`/dashboard/orders/${order.id}`}
-                      className="text-sm text-primary-600 hover:text-primary-700 mt-2 inline-block"
-                    >
-                      View Details
-                    </Link>
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-gray-900">
+                        ₹{order.totalAmount.toLocaleString()}
+                      </p>
+                      <Link
+                        href={`/order/${order._id}/documents`}
+                        className="text-sm text-primary-600 hover:text-primary-700 mt-2 inline-block"
+                      >
+                        View Details
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Total Spent */}
         <div className="mt-8 bg-gradient-to-r from-primary-600 to-primary-700 rounded-lg shadow-lg p-6 text-white">
           <div className="flex items-center justify-between">
             <div>
@@ -233,4 +232,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-

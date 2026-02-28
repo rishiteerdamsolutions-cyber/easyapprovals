@@ -1,9 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Menu, X, Search, User, LogOut, ChevronDown } from 'lucide-react';
-import { serviceCategories } from '@/lib/services-data';
+
+interface Category {
+  _id: string;
+  name: string;
+  slug: string;
+}
 
 interface User {
   id: string;
@@ -16,9 +21,16 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isServicesOpen, setIsServicesOpen] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
 
-  // Mock user - in real app, get from auth context
-  const user: User | null = null; // Set to null for now, will be connected to auth
+  useEffect(() => {
+    fetch('/api/categories')
+      .then((r) => r.ok ? r.json() : [])
+      .then(setCategories)
+      .catch(() => setCategories([]));
+  }, []);
+
+  const user: User | null = null;
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
@@ -58,29 +70,41 @@ export default function Navbar() {
                   onMouseLeave={() => setIsServicesOpen(false)}
                   className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-2"
                 >
-                  {serviceCategories.map((category) => (
+                  {categories.length === 0 ? (
+                    <p className="px-4 py-2 text-sm text-gray-500">Run npm run seed</p>
+                  ) : null}
+                  {categories.map((category) => (
                     <Link
-                      key={category.id}
-                      href={`/services?category=${category.id}`}
+                      key={category._id}
+                      href={`/order?category=${category.slug}`}
                       className="block px-4 py-2 text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-colors"
                     >
-                      <div className="flex items-center">
-                        <span className="mr-2">{category.icon}</span>
-                        <span>{category.name}</span>
-                      </div>
+                      <span>{category.name}</span>
                     </Link>
                   ))}
                   <div className="border-t border-gray-200 mt-2 pt-2">
                     <Link
                       href="/services"
+                      className="block px-4 py-2 text-gray-700 hover:bg-primary-50"
+                    >
+                      Browse Catalog
+                    </Link>
+                    <Link
+                      href="/order"
                       className="block px-4 py-2 text-primary-600 hover:bg-primary-50 font-semibold"
                     >
-                      View All Services
+                      Order Services
                     </Link>
                   </div>
                 </div>
               )}
             </div>
+            <Link href="/order" className="text-gray-700 hover:text-primary-600 font-medium">
+              Order
+            </Link>
+            <Link href="/track" className="text-gray-700 hover:text-primary-600 font-medium">
+              Track
+            </Link>
             <Link href="/about" className="text-gray-700 hover:text-primary-600 font-medium">
               About
             </Link>
@@ -155,24 +179,31 @@ export default function Navbar() {
                 <span>Services</span>
                 <ChevronDown className={`h-4 w-4 transition-transform ${isServicesOpen ? 'rotate-180' : ''}`} />
               </button>
-              {isServicesOpen && (
+                  {isServicesOpen && (
                 <div className="pl-4 mt-2 space-y-2">
-                  {serviceCategories.map((category) => (
+                  {categories.map((category) => (
                     <Link
-                      key={category.id}
-                      href={`/services?category=${category.id}`}
+                      key={category._id}
+                      href={`/order?category=${category.slug}`}
                       className="block py-2 text-gray-600 hover:text-primary-600"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      {category.icon} {category.name}
+                      {category.name}
                     </Link>
                   ))}
                   <Link
                     href="/services"
+                    className="block py-2 text-gray-600 hover:text-primary-600"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Browse Catalog
+                  </Link>
+                  <Link
+                    href="/order"
                     className="block py-2 text-primary-600 font-semibold"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    View All Services
+                    Order Services
                   </Link>
                 </div>
               )}

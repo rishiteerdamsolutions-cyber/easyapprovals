@@ -2,29 +2,75 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { services, serviceCategories, getServicesByCategory, searchServices } from '@/lib/services-data';
 import { Search, Filter } from 'lucide-react';
 
+interface Category {
+  _id: string;
+  name: string;
+  slug: string;
+}
+
+interface Service {
+  _id: string;
+  name: string;
+  slug: string;
+  description: string;
+  price: number;
+  categoryId: { name: string; slug: string };
+}
+
 export default function ServicesPage() {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredServices, setFilteredServices] = useState(services);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let result = services;
-
-    if (selectedCategory !== 'all') {
-      result = getServicesByCategory(selectedCategory);
+    async function fetchCategories() {
+      try {
+        const res = await fetch('/api/categories');
+        if (res.ok) {
+          const data = await res.json();
+          setCategories(data);
+        }
+      } catch (e) {
+        console.error(e);
+      }
     }
+    fetchCategories();
+  }, []);
 
-    if (searchQuery) {
-      result = searchServices(searchQuery).filter(s => 
-        selectedCategory === 'all' || s.category === selectedCategory
-      );
+  useEffect(() => {
+    async function fetchServices() {
+      setLoading(true);
+      try {
+        const url = selectedCategory === 'all'
+          ? '/api/services'
+          : `/api/services?categoryId=${categories.find((c) => c.slug === selectedCategory)?._id || ''}`;
+        const res = await fetch(url);
+        if (res.ok) {
+          const data = await res.json();
+          setServices(data);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
     }
+    if (selectedCategory === 'all' || categories.length > 0) {
+      fetchServices();
+    }
+  }, [selectedCategory, categories]);
 
-    setFilteredServices(result);
-  }, [selectedCategory, searchQuery]);
+  const filteredServices = searchQuery
+    ? services.filter(
+        (s) =>
+          s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          s.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : services;
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4">
@@ -36,7 +82,6 @@ export default function ServicesPage() {
           </p>
         </div>
 
-        {/* Search and Filter */}
         <div className="mb-8 flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -56,8 +101,8 @@ export default function ServicesPage() {
               className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             >
               <option value="all">All Categories</option>
-              {serviceCategories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
+              {categories.map((cat) => (
+                <option key={cat._id} value={cat.slug}>
                   {cat.name}
                 </option>
               ))}
@@ -65,60 +110,47 @@ export default function ServicesPage() {
           </div>
         </div>
 
-        {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredServices.map((service) => (
-            <Link
-              key={service.id}
-              href={`/services/${service.slug}`}
-              className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow"
-            >
-              <div className="flex justify-between items-start mb-4">
-                <h3 className="text-lg font-semibold text-gray-900 flex-1">
-                  {service.name}
-                </h3>
-                {service.popular && (
-                  <span className="bg-primary-100 text-primary-700 text-xs font-semibold px-2 py-1 rounded">
-                    Popular
-                  </span>
-                )}
-              </div>
-              <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                {service.description}
-              </p>
-              <div className="flex justify-between items-center pt-4 border-t">
-                <div>
+        {loading ? (
+          <div className="text-center py-12 text-gray-500">Loading services...</div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredServices.map((service) => (
+              <Link
+                key={service._id}
+                href={`/services/${service.slug}`}
+                className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow"
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900 flex-1">
+                    {service.name}
+                  </h3>
+                </div>
+                <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                  {service.description}
+                </p>
+                <div className="flex justify-between items-center pt-4 border-t">
                   <div className="text-primary-600 font-bold text-lg">
-                    ₹{service.basePrice.toLocaleString()}
+                    ₹{service.price.toLocaleString()}
                   </div>
-                  {service.governmentFee > 0 && (
-                    <div className="text-xs text-gray-500">
-                      + ₹{service.governmentFee.toLocaleString()} govt. fees
-                    </div>
-                  )}
                 </div>
-                <div className="text-sm text-gray-500">
-                  {service.processingTime}
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-
-        {filteredServices.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No services found matching your criteria.</p>
+              </Link>
+            ))}
           </div>
         )}
 
-        {/* Stats */}
+        {!loading && filteredServices.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">No services found. Run the seed script to populate data.</p>
+          </div>
+        )}
+
         <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6">
           <div className="bg-white p-6 rounded-lg shadow text-center">
             <div className="text-3xl font-bold text-primary-600">{services.length}+</div>
             <div className="text-gray-600 mt-2">Services</div>
           </div>
           <div className="bg-white p-6 rounded-lg shadow text-center">
-            <div className="text-3xl font-bold text-primary-600">{serviceCategories.length}</div>
+            <div className="text-3xl font-bold text-primary-600">{categories.length}</div>
             <div className="text-gray-600 mt-2">Categories</div>
           </div>
           <div className="bg-white p-6 rounded-lg shadow text-center">
@@ -134,4 +166,3 @@ export default function ServicesPage() {
     </div>
   );
 }
-

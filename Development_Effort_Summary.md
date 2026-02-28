@@ -339,3 +339,5 @@
 
 **The key is to start with core features, get clients using it, then iterate based on feedback. Don't try to build everything at once.**
 
+
+

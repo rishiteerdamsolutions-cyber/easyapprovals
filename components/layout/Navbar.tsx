@@ -55,43 +55,43 @@ export default function Navbar() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
             {/* Services Dropdown */}
-            <div className="relative">
+            <div
+              className="relative"
+              onMouseEnter={() => setIsServicesOpen(true)}
+              onMouseLeave={() => setIsServicesOpen(false)}
+            >
               <button
-                onMouseEnter={() => setIsServicesOpen(true)}
-                onMouseLeave={() => setIsServicesOpen(false)}
-                className="flex items-center text-gray-700 hover:text-primary-600 font-medium"
+                className="flex items-center text-gray-700 hover:text-primary-600 font-medium py-2"
               >
                 Services
                 <ChevronDown className="ml-1 h-4 w-4" />
               </button>
               {isServicesOpen && (
                 <div
-                  onMouseEnter={() => setIsServicesOpen(true)}
-                  onMouseLeave={() => setIsServicesOpen(false)}
-                  className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-2"
+                  className="absolute top-full left-0 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-2"
                 >
-                  {categories.length === 0 ? (
-                    <p className="px-4 py-2 text-sm text-gray-500">Run npm run seed</p>
-                  ) : null}
                   {categories.map((category) => (
                     <Link
                       key={category._id}
                       href={`/order?category=${category.slug}`}
                       className="block px-4 py-2 text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-colors"
+                      onClick={() => setIsServicesOpen(false)}
                     >
-                      <span>{category.name}</span>
+                      {category.name}
                     </Link>
                   ))}
                   <div className="border-t border-gray-200 mt-2 pt-2">
                     <Link
                       href="/services"
                       className="block px-4 py-2 text-gray-700 hover:bg-primary-50"
+                      onClick={() => setIsServicesOpen(false)}
                     >
                       Browse Catalog
                     </Link>
                     <Link
                       href="/order"
                       className="block px-4 py-2 text-primary-600 hover:bg-primary-50 font-semibold"
+                      onClick={() => setIsServicesOpen(false)}
                     >
                       Order Services
                     </Link>

@@ -185,9 +185,9 @@ function OrderSelectContent() {
     return (
       <div className="min-h-screen bg-gray-50 py-12 px-4 flex items-center justify-center">
         <div className="text-center max-w-md">
-          <p className="text-gray-600 mb-4">No categories found. Seed the database first.</p>
-          <p className="text-sm text-gray-500 mb-2">1. Add MONGODB_URI to .env.local</p>
-          <p className="text-sm text-gray-500 mb-4">2. Run: <code className="bg-gray-200 px-2 py-1 rounded">npm run seed</code></p>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Services Coming Soon</h2>
+          <p className="text-gray-600 mb-6">Our service catalog is being updated. Please check back shortly or contact us for assistance.</p>
+          <a href="/contact" className="bg-primary-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-700 inline-block mr-4">Contact Us</a>
           <a href="/" className="text-primary-600 hover:underline">← Back to Home</a>
         </div>
       </div>

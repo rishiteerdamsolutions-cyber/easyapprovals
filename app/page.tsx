@@ -79,12 +79,7 @@ export default async function Home() {
       <section className="py-16 px-4 bg-white">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12">Key Services</h2>
-          {categories.length === 0 ? (
-            <div className="text-center py-12 bg-gray-50 rounded-lg">
-              <p className="text-gray-600 mb-4">No categories yet. Run the seed script to populate data.</p>
-              <code className="bg-gray-200 px-3 py-1 rounded text-sm">npm run seed</code>
-            </div>
-          ) : (
+          {categories.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {categories.slice(0, 8).map((category: { _id: string; name: string; slug: string }) => (
               <Link
@@ -115,11 +110,7 @@ export default async function Home() {
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </div>
-          {services.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-lg">
-              <p className="text-gray-600">No services yet. Run <code className="bg-gray-200 px-2 py-1 rounded">npm run seed</code></p>
-            </div>
-          ) : (
+          {services.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {services.map((service: { _id: string; name: string; slug: string; description?: string; price?: number }) => (
               <Link

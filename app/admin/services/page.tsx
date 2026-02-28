@@ -37,7 +37,7 @@ export default function AdminServicesPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Link href="/admin" className="text-primary-600 hover:underline mb-4 inline-block">← Dashboard</Link>
         <h1 className="text-2xl font-bold text-gray-900 mb-6">Services Management</h1>
-        <p className="text-gray-600 mb-6">Services are managed via database. Use MongoDB Compass or API to add/edit. Admin CRUD UI can be extended.</p>
+        <p className="text-gray-600 mb-6">Services are managed via the database. Contact the developer to add or edit services.</p>
         {loading ? (
           <div className="bg-white rounded-lg shadow p-8 text-center">Loading...</div>
         ) : (

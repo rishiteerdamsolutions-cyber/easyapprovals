@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
-import { resolveService, RESERVED_PATHS } from '@/lib/service-resolver';
+import { resolveServiceWithVariation, RESERVED_PATHS } from '@/lib/service-resolver';
 import ServicePageTemplate from '@/components/services/ServicePageTemplate';
 import { enrichServiceForDisplay } from '@/lib/service-display';
 
@@ -14,7 +14,7 @@ export async function generateMetadata({
   const slug = params.slug;
   if (RESERVED_PATHS.has(slug)) return { title: 'Easy Approval' };
 
-  const resolved = await resolveService(slug);
+  const resolved = await resolveServiceWithVariation(slug);
   if (!resolved) return { title: 'Service Not Found | Easy Approval' };
 
   const name = resolved.service.name as string;
@@ -38,12 +38,18 @@ export default async function RootSlugPage({
     notFound();
   }
 
-  const resolved = await resolveService(slug);
+  const resolved = await resolveServiceWithVariation(slug);
   if (!resolved) {
     notFound();
   }
 
   const enrichedService = enrichServiceForDisplay(resolved.service);
+  const variation = (resolved.service as { variation?: string }).variation;
 
-  return <ServicePageTemplate service={enrichedService} />;
+  return (
+    <ServicePageTemplate
+      service={enrichedService}
+      variation={variation}
+    />
+  );
 }

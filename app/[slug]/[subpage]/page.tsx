@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import {
-  resolveService,
+  resolveServiceWithVariation,
   RESERVED_PATHS,
   VALID_SUBPAGES,
 } from '@/lib/service-resolver';
@@ -19,7 +19,7 @@ export async function generateMetadata({
   if (RESERVED_PATHS.has(slug) || !VALID_SUBPAGES.has(subpage))
     return { title: 'Easy Approval' };
 
-  const resolved = await resolveService(slug);
+  const resolved = await resolveServiceWithVariation(slug);
   if (!resolved) return { title: 'Service Not Found | Easy Approval' };
 
   const name = resolved.service.name as string;
@@ -41,12 +41,13 @@ export default async function RootSlugSubpagePage({
     notFound();
   }
 
-  const resolved = await resolveService(slug);
+  const resolved = await resolveServiceWithVariation(slug);
   if (!resolved) {
     notFound();
   }
 
   const enrichedService = enrichServiceForDisplay(resolved.service);
+  const variation = (resolved.service as { variation?: string }).variation;
 
   const scrollId =
     subpage === 'government-fees'
@@ -59,6 +60,7 @@ export default async function RootSlugSubpagePage({
     <ServicePageTemplate
       service={enrichedService}
       subpage={scrollId}
+      variation={variation}
     />
   );
 }

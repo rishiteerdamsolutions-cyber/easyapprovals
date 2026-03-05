@@ -39,6 +39,55 @@ export async function resolveService(slugOrAlias: string): Promise<ResolvedServi
   };
 }
 
+/** Common variation suffixes (Layer 2 SEO) - e.g. gst-registration-documents */
+export const COMMON_VARIATIONS = new Set([
+  'online',
+  'documents',
+  'fees',
+  'process',
+  'cancellation',
+  'renewal',
+  'for-partnership',
+  'for-llp',
+  'for-proprietorship',
+  'time',
+]);
+
+/**
+ * Resolve slug-variation format (e.g. gst-registration-documents).
+ * Tries exact match first, then parses as base-variation.
+ */
+export async function resolveServiceWithVariation(
+  fullSlug: string
+): Promise<ResolvedService | null> {
+  // Try exact match first
+  const exact = await resolveService(fullSlug);
+  if (exact) return exact;
+
+  // Parse slug-variation: split from the end, find valid base + variation
+  const parts = fullSlug.split('-');
+  for (let i = parts.length - 1; i >= 1; i--) {
+    const variation = parts.slice(i).join('-');
+    const baseSlug = parts.slice(0, i).join('-');
+
+    if (!COMMON_VARIATIONS.has(variation)) continue;
+
+    const resolved = await resolveService(baseSlug);
+    if (resolved) {
+      const svc = resolved.service as { variations?: string[] };
+      const variations = svc?.variations || [];
+      const hasVariation =
+        variations.includes(variation) || variations.length === 0;
+
+      if (hasVariation) {
+        return { ...resolved, service: { ...resolved.service, variation } };
+      }
+    }
+  }
+
+  return null;
+}
+
 /** Paths that should never be treated as service slugs */
 export const RESERVED_PATHS = new Set([
   'order',

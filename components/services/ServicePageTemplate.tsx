@@ -30,6 +30,7 @@ interface ServicePageTemplateProps {
   service: ServiceForTemplate;
   city?: string;
   subpage?: string;
+  variation?: string;
 }
 
 function getDocLabels(docs: { label?: string }[] | undefined): string[] {
@@ -37,7 +38,7 @@ function getDocLabels(docs: { label?: string }[] | undefined): string[] {
   return docs.map((d) => d.label || '').filter(Boolean);
 }
 
-export default function ServicePageTemplate({ service, city, subpage }: ServicePageTemplateProps) {
+export default function ServicePageTemplate({ service, city, subpage, variation }: ServicePageTemplateProps) {
   const categoryName =
     typeof service.categoryId === 'object' && service.categoryId?.name
       ? service.categoryId.name
@@ -63,7 +64,7 @@ export default function ServicePageTemplate({ service, city, subpage }: ServiceP
 
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <HeroSection
-            name={service.name}
+            name={variation ? `${service.name} - ${variation.replace(/-/g, ' ')}` : service.name}
             description={service.description || ''}
             categoryName={categoryName}
             city={city}

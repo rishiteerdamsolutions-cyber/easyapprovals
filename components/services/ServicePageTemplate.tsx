@@ -58,7 +58,7 @@ export default function ServicePageTemplate({ service, city, subpage, variation 
           <Link href="/services" className="text-gray-500 hover:text-primary-600">
             Services
           </Link>
-          <span className="mx-2 text-gray-400">/</span>          <span className="mx-2 text-gray-400">/</span>
+          <span className="mx-2 text-gray-400">/</span>
           <span className="text-gray-900">{service.name}</span>
         </nav>
 

@@ -7,6 +7,7 @@ import {
 } from '@/lib/service-resolver';
 import ServicePageTemplate from '@/components/services/ServicePageTemplate';
 import { enrichServiceForDisplay } from '@/lib/service-display';
+import { getCityName } from '@/lib/locations';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,10 +24,12 @@ export async function generateMetadata({
   if (!resolved) return { title: 'Service Not Found | Easy Approval' };
 
   const name = resolved.service.name as string;
+  const cityDisplay = resolved.city ? getCityName(resolved.city) : undefined;
+  const titleName = cityDisplay ? `${name} in ${cityDisplay}` : name;
   const subpageLabel = subpage.replace(/-/g, ' ');
   return {
-    title: `${name} - ${subpageLabel} | Easy Approval`,
-    description: `${name} - ${subpageLabel}. Professional service from Easy Approval.`,
+    title: `${titleName} - ${subpageLabel} | Easy Approval`,
+    description: `${titleName} - ${subpageLabel}. Professional service from Easy Approval.`,
   };
 }
 
@@ -48,6 +51,7 @@ export default async function RootSlugSubpagePage({
 
   const enrichedService = enrichServiceForDisplay(resolved.service);
   const variation = (resolved.service as { variation?: string }).variation;
+  const cityDisplay = resolved.city ? getCityName(resolved.city) : undefined;
 
   const scrollId =
     subpage === 'government-fees'
@@ -61,6 +65,7 @@ export default async function RootSlugSubpagePage({
       service={enrichedService}
       subpage={scrollId}
       variation={variation}
+      city={cityDisplay}
     />
   );
 }

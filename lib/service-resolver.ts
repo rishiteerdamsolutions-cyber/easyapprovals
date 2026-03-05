@@ -1,5 +1,6 @@
 import connectDB from '@/lib/mongodb';
 import Service from '@/models/Service';
+import { CITY_SLUGS } from './locations';
 
 /** Slug aliases: alternate URLs that resolve to a canonical service slug */
 const SLUG_ALIASES: Record<string, string> = {
@@ -54,18 +55,33 @@ export const COMMON_VARIATIONS = new Set([
 ]);
 
 /**
- * Resolve slug-variation format (e.g. gst-registration-documents).
- * Tries exact match first, then parses as base-variation.
+ * Resolve slug-variation or slug-city format.
+ * Order: exact match → slug-city → slug-variation.
  */
 export async function resolveServiceWithVariation(
   fullSlug: string
 ): Promise<ResolvedService | null> {
-  // Try exact match first
+  // 1. Exact match
   const exact = await resolveService(fullSlug);
   if (exact) return exact;
 
-  // Parse slug-variation: split from the end, find valid base + variation
   const parts = fullSlug.split('-');
+  if (parts.length < 2) return null;
+
+  // 2. Slug-city (e.g. gst-registration-delhi) - Layer 3
+  const lastPart = parts[parts.length - 1];
+  if (CITY_SLUGS.has(lastPart)) {
+    const baseSlug = parts.slice(0, -1).join('-');
+    const resolved = await resolveService(baseSlug);
+    if (resolved) {
+      const svc = resolved.service as { locationsEnabled?: boolean };
+      if (svc?.locationsEnabled) {
+        return { ...resolved, city: lastPart };
+      }
+    }
+  }
+
+  // 3. Slug-variation (e.g. gst-registration-documents) - Layer 2
   for (let i = parts.length - 1; i >= 1; i--) {
     const variation = parts.slice(i).join('-');
     const baseSlug = parts.slice(0, i).join('-');

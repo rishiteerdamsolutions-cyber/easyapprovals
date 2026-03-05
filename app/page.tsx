@@ -48,7 +48,7 @@ export default async function Home() {
               </Link>
               <Link
                 href="/services"
-                className="bg-white text-primary-600 border-2 border-primary-600 px-8 py-4 rounded-lg font-semibold hover:bg-primary-50 transition-colors"
+                className="bg-white text-primary-600 border-2 border-primary-600 px-8 py-4 rounded-lg font-semibold hover:bg-primary-50 transition-colors cursor-pointer"
               >
                 Browse Catalog
               </Link>
@@ -84,7 +84,7 @@ export default async function Home() {
             {categories.slice(0, 8).map((category: { _id: string; name: string; slug: string }) => (
               <Link
                 key={category._id}
-                href={`/order?category=${category.slug}`}
+                href={`/category/${category.slug}`}
                 className="p-6 border-2 border-gray-200 rounded-lg hover:border-primary-500 hover:shadow-lg transition-all"
               >
                 <h3 className="text-xl font-semibold mb-2">{category.name}</h3>

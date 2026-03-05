@@ -27,7 +27,7 @@ export async function sendEmail(to: string, subject: string, html: string): Prom
   }
 }
 
-const DOCUMENTS_EMAIL = process.env.DOCUMENTS_EMAIL || 'documents@easyapproval.com';
+const DOCUMENTS_EMAIL = process.env.DOCUMENTS_EMAIL || 'aideveloperindia@gmail.com';
 
 export function paymentSuccessEmail(orderId: string, customerName: string, totalAmount: number, services: string[]): string {
   const mailto = `mailto:${DOCUMENTS_EMAIL}?subject=Documents - Order ${orderId}`;

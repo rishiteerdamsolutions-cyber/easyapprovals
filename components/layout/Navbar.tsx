@@ -37,6 +37,12 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-4">
             <Link
               href="/services"
+              className="text-gray-700 hover:text-primary-600 font-medium"
+            >
+              Browse Catalog
+            </Link>
+            <Link
+              href="/services"
               className="text-gray-600 hover:text-primary-600 p-2"
               aria-label="Search services"
             >
@@ -110,7 +116,14 @@ export default function Navbar() {
             <div className="mt-4 pt-4 border-t border-gray-200 space-y-2">
               <Link
                 href="/services"
-                className="flex items-center gap-2 py-2 text-gray-700 hover:text-primary-600"
+                className="flex items-center gap-2 py-2 text-gray-700 hover:text-primary-600 font-medium"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Browse Catalog
+              </Link>
+              <Link
+                href="/services"
+                className="flex items-center gap-2 py-2 text-gray-600 hover:text-primary-600"
                 onClick={() => setIsMenuOpen(false)}
               >
                 <Search className="h-4 w-4" />

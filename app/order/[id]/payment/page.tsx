@@ -12,6 +12,28 @@ declare global {
   }
 }
 
+function waitForRazorpay(maxMs = 10000): Promise<typeof window.Razorpay> {
+  return new Promise((resolve) => {
+    if (typeof window !== 'undefined' && window.Razorpay) {
+      resolve(window.Razorpay);
+      return;
+    }
+    const start = Date.now();
+    const check = () => {
+      if (typeof window !== 'undefined' && window.Razorpay) {
+        resolve(window.Razorpay!);
+        return;
+      }
+      if (Date.now() - start > maxMs) {
+        resolve(undefined as unknown as typeof window.Razorpay);
+        return;
+      }
+      setTimeout(check, 200);
+    };
+    check();
+  });
+}
+
 interface RazorpayOptions {
   key: string;
   amount: number;
@@ -45,6 +67,7 @@ export default function PaymentPage() {
   const [order, setOrder] = useState<OrderData | null>(null);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
+  const [razorpayReady, setRazorpayReady] = useState(false);
 
   useEffect(() => {
     async function fetchOrder() {
@@ -77,6 +100,13 @@ export default function PaymentPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to create payment');
 
+      const RazorpayConstructor = await waitForRazorpay();
+      if (!RazorpayConstructor) {
+        alert('Payment gateway is still loading. Please wait a moment and try again.');
+        setProcessing(false);
+        return;
+      }
+
       const options: RazorpayOptions = {
         key: data.keyId,
         amount: data.amount,
@@ -108,12 +138,7 @@ export default function PaymentPage() {
         },
       };
 
-      if (!window.Razorpay) {
-        alert('Payment gateway not loaded. Please refresh.');
-        setProcessing(false);
-        return;
-      }
-      const razorpay = new window.Razorpay(options);
+      const razorpay = new RazorpayConstructor(options);
       razorpay.on?.('payment.failed', () => {
         alert('Payment failed');
         setProcessing(false);
@@ -144,7 +169,11 @@ export default function PaymentPage() {
 
   return (
     <>
-      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="beforeInteractive" />
+      <Script
+        src="https://checkout.razorpay.com/v1/checkout.js"
+        strategy="afterInteractive"
+        onLoad={() => setRazorpayReady(true)}
+      />
     <div className="min-h-screen bg-gray-50 py-12 px-4">
       <div className="max-w-2xl mx-auto">
         <div className="bg-white rounded-lg shadow-md p-8">
@@ -155,11 +184,27 @@ export default function PaymentPage() {
           </div>
           <button
             onClick={handlePayment}
-            disabled={processing || order.paymentStatus === 'paid'}
+            disabled={processing || order.paymentStatus === 'paid' || !razorpayReady}
             className="w-full bg-primary-600 text-white py-3 rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50 flex items-center justify-center gap-2"
           >
-            {processing ? <Loader2 className="h-5 w-5 animate-spin" /> : <CreditCard className="h-5 w-5" />}
-            {order.paymentStatus === 'paid' ? 'Payment Complete' : 'Pay with Razorpay'}
+            {!razorpayReady ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" />
+                Loading payment gateway...
+              </>
+            ) : processing ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" />
+                Opening Razorpay...
+              </>
+            ) : order.paymentStatus === 'paid' ? (
+              'Payment Complete'
+            ) : (
+              <>
+                <CreditCard className="h-5 w-5" />
+                Pay with Razorpay
+              </>
+            )}
           </button>
         </div>
       </div>

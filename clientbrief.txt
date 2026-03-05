@@ -1,0 +1,73 @@
+# Easy Approval — Client Brief
+
+## What the website does
+
+Easy Approval is India's AI-powered corporate services and compliance platform. It helps businesses and entrepreneurs register companies, obtain GST and Income Tax compliances, handle MCA filings, register trademarks, and manage other regulatory requirements—all in one place.
+
+The platform provides end-to-end workflows: select a service, pay online, submit documents, and track progress until delivery.
+
+---
+
+## Service Categories
+
+| Category | Examples |
+|----------|----------|
+| Start a Business | Private Limited, LLP, OPC, Proprietorship, Partnership, Section 8, Startup India |
+| Registrations & Licenses | MSME/Udyam, FSSAI, IEC, Trade License, DSC, TAN, PF, ESI, ISO |
+| Trademark & IP | Trademark registration, objection, renewal, copyright, patent, design |
+| GST Services | GST registration, return filing, LUT, amendment, cancellation, refund, e-invoicing |
+| Income Tax | ITR filing, TDS returns, PAN/TAN, tax notices, 15CA/15CB |
+| MCA Compliance | Company/LLP/OPC compliance, director changes, annual filing, winding up |
+| Accounting & HR | Bookkeeping, payroll, PF/ESI returns, CA support |
+
+---
+
+## Key Features
+
+1. Service catalog — 150+ services with clear pricing, timelines, and required documents. Browse by category or search.
+
+2. Online order and payment — Add services to cart, complete order with details, pay securely via Razorpay. Order confirmation and invoice sent by email.
+
+3. Document submission (email-based) — After payment, users receive clear instructions to email documents (PAN, Aadhaar, etc.) to a dedicated address. A mailto button opens their email client with pre-filled recipient and subject (Order ID). No in-site file upload.
+
+4. Order tracking — Track order status by email/Order ID. Status updates as the order moves through processing.
+
+5. User dashboard — Log in to view orders, document status, payments, and profile. Central place to manage compliance.
+
+6. Admin dashboard — Manage orders, categories, services. Review and process submitted documents. Reporting and analytics.
+
+7. SEO and growth — 5-layer SEO architecture (core services, variations, location pages, guides, tools) designed to attract organic search traffic and scale over time.
+
+8. Core pages — About, Contact, Careers, Support. Conversion pages: Pricing, free consultation, request callback. Legal: Terms, Privacy, Refund, Disclaimer.
+
+---
+
+## User Journey
+
+1. Browse services or search.
+2. Select service(s) and view pricing.
+3. Place order with details.
+4. Pay online (Razorpay).
+5. Email documents to the specified address (mailto button).
+6. Track order status.
+7. Receive completed work (certificates, registrations, filings).
+
+---
+
+## Technical Highlights
+
+- Secure payment (Razorpay)
+- Responsive design (mobile and desktop)
+- SEO-optimized architecture
+- Dynamic page generation for scalability
+- Email-based document collection (no file storage cost)
+
+---
+
+## Summary for Client
+
+Easy Approval is a one-stop platform for corporate and compliance services in India. Clients can browse 150+ services, place orders, pay securely, submit documents by email, and track progress—all from a single website. The platform is built to scale in traffic and services over time.
+
+---
+
+Note: Final branding and copy can be customized per client. This brief reflects the planned scope and features.

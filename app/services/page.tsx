@@ -16,6 +16,10 @@ interface Service {
   slug: string;
   description: string;
   price: number;
+  serviceCharge?: number;
+  governmentFee?: number;
+  professionalFee?: number;
+  gstPercent?: number;
   categoryId: { name: string; slug: string };
 }
 
@@ -114,27 +118,39 @@ export default function ServicesPage() {
           <div className="text-center py-12 text-gray-500">Loading services...</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredServices.map((service) => (
-              <Link
-                key={service._id}
-                href={`/services/${service.slug}`}
-                className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow"
-              >
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900 flex-1">
-                    {service.name}
-                  </h3>
-                </div>
-                <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                  {service.description}
-                </p>
-                <div className="flex justify-between items-center pt-4 border-t">
-                  <div className="text-primary-600 font-bold text-lg">
-                    ₹{service.price.toLocaleString()}
+            {filteredServices.map((service) => {
+              const sc = service.serviceCharge ?? 0;
+              const gf = service.governmentFee ?? 0;
+              const pf = service.professionalFee ?? 0;
+              const subtotal = sc + gf + pf > 0 ? sc + gf + pf : service.price;
+              const gst = Math.round(subtotal * ((service.gstPercent ?? 18) / 100));
+              const total = subtotal + gst;
+              return (
+                <Link
+                  key={service._id}
+                  href={`/services/${service.slug}`}
+                  className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow"
+                >
+                  <div className="flex justify-between items-start mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900 flex-1">
+                      {service.name}
+                    </h3>
                   </div>
-                </div>
-              </Link>
-            ))}
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                    {service.description}
+                  </p>
+                  <div className="pt-4 border-t space-y-1">
+                    <div className="flex justify-between text-sm text-gray-600">
+                      <span>Total (incl. GST):</span>
+                      <span className="font-bold text-primary-600">₹{total.toLocaleString()}</span>
+                    </div>
+                    {(sc > 0 || gf > 0 || pf > 0) && (
+                      <p className="text-xs text-gray-500">View breakdown →</p>
+                    )}
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         )}
 

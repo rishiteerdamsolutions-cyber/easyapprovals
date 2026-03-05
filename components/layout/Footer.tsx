@@ -1,13 +1,13 @@
 import Link from 'next/link';
-import Image from 'next/image';
+import { footerColumns, footerBottomLinks } from '@/lib/navigation-data';
 
 export default function Footer() {
   return (
     <footer className="bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
           {/* Company Info */}
-          <div>
+          <div className="lg:col-span-1">
             <div className="flex items-center mb-4">
               <img
                 src="/easyapprovallogo.png"
@@ -23,98 +23,44 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Services */}
-          <div>
-            <h3 className="font-semibold mb-4">Services</h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/services?category=startup" className="text-gray-400 hover:text-white">
-                  Business Registration
-                </Link>
-              </li>
-              <li>
-                <Link href="/services?category=gst" className="text-gray-400 hover:text-white">
-                  GST Services
-                </Link>
-              </li>
-              <li>
-                <Link href="/services?category=income-tax" className="text-gray-400 hover:text-white">
-                  Income Tax
-                </Link>
-              </li>
-              <li>
-                <Link href="/services?category=mca" className="text-gray-400 hover:text-white">
-                  MCA Compliance
-                </Link>
-              </li>
-              <li>
-                <Link href="/services?category=trademark" className="text-gray-400 hover:text-white">
-                  Trademark & IP
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Company */}
-          <div>
-            <h3 className="font-semibold mb-4">Company</h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/about" className="text-gray-400 hover:text-white">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="text-gray-400 hover:text-white">
-                  Contact
-                </Link>
-              </li>
-              <li>
-                <Link href="/careers" className="text-gray-400 hover:text-white">
-                  Careers
-                </Link>
-              </li>
-              <li>
-                <Link href="/blog" className="text-gray-400 hover:text-white">
-                  Blog
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Legal */}
-          <div>
-            <h3 className="font-semibold mb-4">Legal</h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/terms" className="text-gray-400 hover:text-white">
-                  Terms & Conditions
-                </Link>
-              </li>
-              <li>
-                <Link href="/privacy" className="text-gray-400 hover:text-white">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="/refund" className="text-gray-400 hover:text-white">
-                  Refund Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="/disclaimer" className="text-gray-400 hover:text-white">
-                  Disclaimer
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {/* Dynamic columns from navigation-data */}
+          {footerColumns.map((column) => (
+            <div key={column.title}>
+              <h3 className="font-semibold mb-4">{column.title}</h3>
+              <ul className="space-y-2 text-sm">
+                {column.links.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="text-gray-400 hover:text-white transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
-          <p>&copy; {new Date().getFullYear()} Easy Approval. All rights reserved.</p>
+        {/* Bottom row */}
+        <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-gray-400">
+            &copy; {new Date().getFullYear()} Easy Approval. All rights reserved.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+            {footerBottomLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-sm text-gray-400 hover:text-white transition-colors"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </footer>
   );
 }
-

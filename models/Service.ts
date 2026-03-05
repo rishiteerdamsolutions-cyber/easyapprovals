@@ -14,14 +14,36 @@ export interface IRequiredDocument {
   minFileSizeKB?: number;
 }
 
+export interface IProcessStep {
+  title: string;
+  description: string;
+}
+
+export interface IFAQ {
+  question: string;
+  answer: string;
+}
+
 export interface IService extends Document {
   categoryId: mongoose.Types.ObjectId;
   firmId?: mongoose.Types.ObjectId;
   name: string;
   slug: string;
   description: string;
-  price: number;
+  price: number; // total (fallback)
+  serviceCharge: number; // professional/service fee
+  governmentFee: number;
+  professionalFee: number; // if different from serviceCharge
+  gstPercent: number; // e.g. 18
   requiredDocuments: IRequiredDocument[];
+  processSteps: IProcessStep[];
+  eligibility: string[];
+  faqs: IFAQ[];
+  benefits: string[];
+  processingTime: string;
+  aliases: string[];
+  variations: string[];
+  locationsEnabled: boolean;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -49,6 +71,16 @@ const RequiredDocumentSchema = new Schema<IRequiredDocument>(
   { _id: false }
 );
 
+const ProcessStepSchema = new Schema<IProcessStep>(
+  { title: { type: String, required: true }, description: { type: String, default: '' } },
+  { _id: false }
+);
+
+const FAQSchema = new Schema<IFAQ>(
+  { question: { type: String, required: true }, answer: { type: String, default: '' } },
+  { _id: false }
+);
+
 const ServiceSchema = new Schema<IService>(
   {
     categoryId: {
@@ -61,7 +93,19 @@ const ServiceSchema = new Schema<IService>(
     slug: { type: String, required: true },
     description: { type: String, default: '' },
     price: { type: Number, required: true },
+    serviceCharge: { type: Number, default: 0 },
+    governmentFee: { type: Number, default: 0 },
+    professionalFee: { type: Number, default: 0 },
+    gstPercent: { type: Number, default: 18 },
     requiredDocuments: [RequiredDocumentSchema],
+    processSteps: { type: [ProcessStepSchema], default: [] },
+    eligibility: { type: [String], default: [] },
+    faqs: { type: [FAQSchema], default: [] },
+    benefits: { type: [String], default: [] },
+    processingTime: { type: String, default: '' },
+    aliases: { type: [String], default: [] },
+    variations: { type: [String], default: [] },
+    locationsEnabled: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
   },
   { timestamps: true }

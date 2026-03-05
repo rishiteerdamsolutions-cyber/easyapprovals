@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import {
   ShoppingCart,
   Clock,
@@ -23,35 +24,27 @@ interface Order {
 }
 
 export default function DashboardPage() {
+  const { data: session, status } = useSession();
   const router = useRouter();
-  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const userData = localStorage.getItem('user');
-    if (!userData) {
-      router.push('/login');
-      return;
+    if (status === 'unauthenticated') {
+      router.push('/login?callbackUrl=/dashboard');
     }
-    try {
-      const u = JSON.parse(userData);
-      setUser(u);
-    } catch {
-      router.push('/login');
-    }
-  }, [router]);
+  }, [status, router]);
 
   useEffect(() => {
-    if (!user?.email) return;
-    fetch(`/api/orders/by-email?email=${encodeURIComponent(user.email)}`)
+    if (!session?.user?.email) return;
+    fetch(`/api/orders/by-email?email=${encodeURIComponent(session.user.email)}`)
       .then((r) => r.json())
       .then(setOrders)
       .catch(() => setOrders([]))
       .finally(() => setLoading(false));
-  }, [user?.email]);
+  }, [session?.user?.email]);
 
-  if (!user) {
+  if (status === 'loading' || !session?.user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-gray-600">Loading...</p>
@@ -76,7 +69,7 @@ export default function DashboardPage() {
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome back, {user.name}!
+            Welcome back, {session.user.name || session.user.email}!
           </h1>
           <p className="text-gray-600">Manage your orders and track compliance</p>
         </div>
@@ -175,7 +168,7 @@ export default function DashboardPage() {
             <div className="p-8 text-center text-gray-500">Loading orders...</div>
           ) : orders.length === 0 ? (
             <div className="p-8 text-center text-gray-500">
-              <p>No orders yet. Orders placed with {user.email} will appear here.</p>
+              <p>No orders yet. Orders placed with {session.user.email} will appear here.</p>
               <Link href="/order" className="text-primary-600 hover:underline mt-2 inline-block">Order Services</Link>
             </div>
           ) : (

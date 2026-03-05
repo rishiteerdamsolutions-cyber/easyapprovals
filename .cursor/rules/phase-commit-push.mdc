@@ -1,0 +1,14 @@
+---
+description: After completing each phase of the Easy Approval plan, commit and push changes
+alwaysApply: true
+---
+
+# Phase Completion: Commit and Push
+
+After completing each phase of the Easy Approval architecture plan:
+
+1. Stage all changes: `git add -A`
+2. Commit with a descriptive message including phase number and what was done
+3. Push to origin: `git push origin main`
+
+GitHub credentials are configured in the project. Do not commit `.env.local` or any file containing tokens.

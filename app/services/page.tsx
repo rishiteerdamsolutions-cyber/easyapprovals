@@ -128,7 +128,7 @@ export default function ServicesPage() {
               return (
                 <Link
                   key={service._id}
-                  href={`/services/${service.slug}`}
+                  href={`/${service.slug}`}
                   className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow"
                 >
                   <div className="flex justify-between items-start mb-4">

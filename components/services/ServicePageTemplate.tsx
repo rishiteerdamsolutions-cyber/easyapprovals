@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import ScrollToSubpage from './ScrollToSubpage';
 import HeroSection from './HeroSection';
 import BenefitsSection from './BenefitsSection';
 import DocumentsSection from './DocumentsSection';
@@ -10,6 +11,7 @@ import CTASection from './CTASection';
 
 export interface ServiceForTemplate {
   name: string;
+  slug?: string;
   description: string;
   categoryId?: { name?: string; slug?: string } | string;
   serviceCharge?: number;
@@ -27,6 +29,7 @@ export interface ServiceForTemplate {
 interface ServicePageTemplateProps {
   service: ServiceForTemplate;
   city?: string;
+  subpage?: string;
 }
 
 function getDocLabels(docs: { label?: string }[] | undefined): string[] {
@@ -34,7 +37,7 @@ function getDocLabels(docs: { label?: string }[] | undefined): string[] {
   return docs.map((d) => d.label || '').filter(Boolean);
 }
 
-export default function ServicePageTemplate({ service, city }: ServicePageTemplateProps) {
+export default function ServicePageTemplate({ service, city, subpage }: ServicePageTemplateProps) {
   const categoryName =
     typeof service.categoryId === 'object' && service.categoryId?.name
       ? service.categoryId.name
@@ -43,6 +46,7 @@ export default function ServicePageTemplate({ service, city }: ServicePageTempla
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {subpage && <ScrollToSubpage subpage={subpage} />}
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Breadcrumb */}
         <nav className="mb-6 text-sm">
@@ -53,7 +57,7 @@ export default function ServicePageTemplate({ service, city }: ServicePageTempla
           <Link href="/services" className="text-gray-500 hover:text-primary-600">
             Services
           </Link>
-          <span className="mx-2 text-gray-400">/</span>
+          <span className="mx-2 text-gray-400">/</span>          <span className="mx-2 text-gray-400">/</span>
           <span className="text-gray-900">{service.name}</span>
         </nav>
 
@@ -66,18 +70,18 @@ export default function ServicePageTemplate({ service, city }: ServicePageTempla
           />
 
           <div className="p-8">
-            <BenefitsSection benefits={service.benefits || []} />
-            <DocumentsSection documents={docLabels} />
-            <ProcessSection steps={service.processSteps || []} />
-            <PricingSection
+            <div id="benefits"><BenefitsSection benefits={service.benefits || []} /></div>
+            <div id="documents-required"><DocumentsSection documents={docLabels} /></div>
+            <div id="process"><ProcessSection steps={service.processSteps || []} /></div>
+            <div id="fees"><PricingSection
               serviceCharge={service.serviceCharge ?? 0}
               governmentFee={service.governmentFee ?? 0}
               professionalFee={service.professionalFee ?? 0}
               gstPercent={service.gstPercent ?? 18}
               price={service.price ?? 0}
-            />
-            <TimelineSection processingTime={service.processingTime || ''} />
-            <FAQSection faqs={service.faqs || []} />
+            /></div>
+            <div id="timeline"><TimelineSection processingTime={service.processingTime || ''} /></div>
+            <div id="faq"><FAQSection faqs={service.faqs || []} /></div>
             <CTASection serviceName={service.name} />
           </div>
         </div>

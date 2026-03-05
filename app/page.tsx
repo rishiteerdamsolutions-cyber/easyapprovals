@@ -115,7 +115,7 @@ export default async function Home() {
             {services.map((service: { _id: string; name: string; slug: string; description?: string; price?: number }) => (
               <Link
                 key={service._id}
-                href={`/services/${service.slug}`}
+                href={`/${service.slug}`}
                 className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow"
               >
                 <h3 className="text-lg font-semibold mb-2">{service.name}</h3>

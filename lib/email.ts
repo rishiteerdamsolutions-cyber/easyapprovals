@@ -27,14 +27,25 @@ export async function sendEmail(to: string, subject: string, html: string): Prom
   }
 }
 
+const DOCUMENTS_EMAIL = process.env.DOCUMENTS_EMAIL || 'documents@easyapproval.com';
+
 export function paymentSuccessEmail(orderId: string, customerName: string, totalAmount: number, services: string[]): string {
+  const mailto = `mailto:${DOCUMENTS_EMAIL}?subject=Documents - Order ${orderId}`;
   return `
     <h2>Payment Successful</h2>
     <p>Dear ${customerName},</p>
     <p>Your payment of ₹${totalAmount.toLocaleString()} for Order <strong>${orderId}</strong> has been received.</p>
     <p><strong>Services:</strong></p>
     <ul>${services.map((s) => `<li>${s}</li>`).join('')}</ul>
-    <p>Please upload your documents at the link provided in your order confirmation.</p>
+    <h3>Document Submission</h3>
+    <p>To complete your order, please email your documents to us:</p>
+    <ol>
+      <li>Attach scanned copies of required documents (PAN, Aadhaar, address proof, etc.)</li>
+      <li>Use the subject line: <strong>Documents - Order ${orderId}</strong></li>
+      <li>Send to: <a href="${mailto}">${DOCUMENTS_EMAIL}</a></li>
+    </ol>
+    <p><a href="${mailto}" style="display:inline-block;background:#2563eb;color:white;padding:12px 24px;text-decoration:none;border-radius:8px;margin:8px 0;">Email Documents Now</a></p>
+    <p>You can also track your order status at any time using your Order ID and email.</p>
     <p>Thank you for choosing Easy Approval.</p>
   `;
 }

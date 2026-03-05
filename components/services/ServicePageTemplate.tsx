@@ -14,6 +14,7 @@ export interface ServiceForTemplate {
   slug?: string;
   description: string;
   categoryId?: { name?: string; slug?: string } | string;
+  _id?: string;
   serviceCharge?: number;
   governmentFee?: number;
   professionalFee?: number;
@@ -83,6 +84,15 @@ export default function ServicePageTemplate({ service, city, subpage, variation 
             /></div>
             <div id="timeline"><TimelineSection processingTime={service.processingTime || ''} /></div>
             <div id="faq"><FAQSection faqs={service.faqs || []} /></div>
+            <div className="pt-6 border-t flex flex-wrap gap-4 text-sm">
+              <Link href="/learn" className="text-primary-600 hover:underline">Learn</Link>
+              <Link href="/tools" className="text-primary-600 hover:underline">Free Tools</Link>
+              {typeof service.categoryId === 'object' && service.categoryId?.slug && (
+                <Link href={`/category/${service.categoryId.slug}`} className="text-primary-600 hover:underline">
+                  More {categoryName} Services
+                </Link>
+              )}
+            </div>
             <CTASection serviceName={service.name} />
           </div>
         </div>

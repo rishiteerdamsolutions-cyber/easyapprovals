@@ -12,6 +12,8 @@ import type { Service as StaticService } from '../lib/services-data';
 import Category from '../models/Category';
 import Service from '../models/Service';
 import Admin from '../models/Admin';
+import Article from '../models/Article';
+import Tool from '../models/Tool';
 
 // Load env: .env.local (Next.js) takes precedence, then .env
 import { config } from 'dotenv';
@@ -117,7 +119,9 @@ async function seed() {
   // Clear existing
   await Category.deleteMany({});
   await Service.deleteMany({});
-  console.log('Cleared existing categories and services.\n');
+  await Article.deleteMany({});
+  await Tool.deleteMany({});
+  console.log('Cleared existing categories, services, articles and tools.\n');
 
   // Seed categories
   const categoryMap: Record<string, mongoose.Types.ObjectId> = {};
@@ -218,6 +222,114 @@ async function seed() {
   }
 
   console.log(`Created ${created} services (${skipped} skipped).\n`);
+
+  // Seed articles (Knowledge Hub)
+  const gstService = await Service.findOne({ slug: 'gst-registration' });
+  const companyService = await Service.findOne({ slug: 'private-limited-company-registration' });
+  const trademarkService = await Service.findOne({ slug: 'trademark-registration' });
+  const gstId = gstService?._id;
+  const companyId = companyService?._id;
+  const trademarkId = trademarkService?._id;
+
+  const sampleArticles: Array<{
+    title: string;
+    slug: string;
+    excerpt: string;
+    content: string;
+    type: 'learn' | 'blog' | 'guide';
+    tags: string[];
+    relatedServiceIds: mongoose.Types.ObjectId[];
+  }> = [
+    {
+      title: 'GST Registration: Complete Guide for Indian Businesses',
+      slug: 'gst-registration-guide',
+      excerpt: 'Everything you need to know about GST registration, eligibility, documents and process in India.',
+      content: '<p>GST (Goods and Services Tax) registration is mandatory for businesses with turnover above ₹20 lakh (₹10 lakh in special category states). This guide covers eligibility, required documents, online application process, and common queries.</p><h2>Who needs GST registration?</h2><p>Any business exceeding the turnover threshold, e-commerce sellers, and businesses making inter-state supplies must register under GST.</p><h2>Documents required</h2><ul><li>PAN of the business</li><li>Aadhaar</li><li>Business proof (rent agreement, electricity bill)</li><li>Bank account details</li></ul>',
+      type: 'learn',
+      tags: ['GST', 'registration', 'tax'],
+      relatedServiceIds: gstId ? [gstId] : [],
+    },
+    {
+      title: 'Private Limited Company: Benefits and Registration Process',
+      slug: 'private-limited-company-benefits',
+      excerpt: 'Understand the advantages of a Private Limited Company and the step-by-step registration process.',
+      content: '<p>A Private Limited Company offers limited liability, credibility, and easier access to funding. This guide explains the benefits, documents needed, and the online registration process through MCA.</p><h2>Key benefits</h2><ul><li>Limited liability protection</li><li>Separate legal entity</li><li>Easier to raise capital</li><li>Professional image</li></ul>',
+      type: 'learn',
+      tags: ['company', 'registration', 'startup'],
+      relatedServiceIds: companyId ? [companyId] : [],
+    },
+    {
+      title: 'GST Return Filing Due Dates 2024-25',
+      slug: 'gst-return-due-dates-2024',
+      excerpt: 'Monthly and annual GST return filing deadlines for FY 2024-25.',
+      content: '<p>GSTR-1 (outward supplies) is due by the 11th of the next month. GSTR-3B (summary return) is due by the 20th. Annual return GSTR-9 is due by 31st December. Keep track of these dates to avoid late fees.</p>',
+      type: 'blog',
+      tags: ['GST', 'returns', 'compliance'],
+      relatedServiceIds: gstId ? [gstId] : [],
+    },
+    {
+      title: 'How to Register a Trademark in India',
+      slug: 'trademark-registration-step-by-step',
+      excerpt: 'Step-by-step guide to trademark registration including search, classification and filing.',
+      content: '<p>Trademark registration protects your brand. Steps: (1) Conduct a trademark search (2) Choose the right class (3) File TM-A application (4) Examination and publication (5) Registration certificate. Processing typically takes 12-18 months.</p>',
+      type: 'guide',
+      tags: ['trademark', 'IP', 'registration'],
+      relatedServiceIds: trademarkId ? [trademarkId] : [],
+    },
+    {
+      title: 'MSME Udyam Registration: Eligibility and Benefits',
+      slug: 'udyam-msme-registration-benefits',
+      excerpt: 'MSME/Udyam registration benefits, eligibility criteria and how to register online.',
+      content: '<p>Udyam registration is free and provides access to subsidies, collateral-free loans, and preference in government tenders. Micro enterprises: investment up to ₹1 crore, turnover up to ₹5 crore. Small: up to ₹10 crore investment, ₹50 crore turnover.</p>',
+      type: 'guide',
+      tags: ['MSME', 'Udyam', 'registration'],
+      relatedServiceIds: [],
+    },
+  ];
+
+  for (const a of sampleArticles) {
+    await Article.create({
+      ...a,
+      isPublished: true,
+      publishedAt: new Date(),
+    });
+  }
+  console.log(`Created ${sampleArticles.length} articles.\n`);
+
+  // Seed tools
+  const tools = [
+    {
+      name: 'GST Calculator',
+      slug: 'gst-calculator',
+      description: 'Calculate GST amount, reverse GST, and inclusive/exclusive GST.',
+      type: 'calculator' as const,
+      icon: 'Calculator',
+      relatedServiceIds: gstId ? [gstId] : [],
+      sortOrder: 1,
+    },
+    {
+      name: 'HSN Code Search',
+      slug: 'hsn-code-search',
+      description: 'Search HSN/SAC codes for GST return filing.',
+      type: 'search' as const,
+      icon: 'Search',
+      relatedServiceIds: gstId ? [gstId] : [],
+      sortOrder: 2,
+    },
+    {
+      name: 'Company Name Availability',
+      slug: 'company-name-availability',
+      description: 'Check MCA name availability for company registration.',
+      type: 'checker' as const,
+      icon: 'CheckCircle',
+      relatedServiceIds: companyId ? [companyId] : [],
+      sortOrder: 3,
+    },
+  ];
+  for (const t of tools) {
+    await Tool.create({ ...t, isActive: true });
+  }
+  console.log(`Created ${tools.length} tools.\n`);
 
   // Create default admin if not exists
   const adminExists = await Admin.findOne({ email: 'admin@easyapproval.com' });

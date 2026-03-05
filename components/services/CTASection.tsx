@@ -15,7 +15,7 @@ export default function CTASection({ serviceName }: CTASectionProps) {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/order"
-            className="inline-block bg-white text-primary-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+            className="inline-block bg-white text-primary-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 hover:scale-105 transition-all duration-200"
           >
             Get Started
           </Link>

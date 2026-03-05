@@ -6,3 +6,6 @@ export { default as OrderActivityLog } from './OrderActivityLog';
 export { default as Firm } from './Firm';
 export { default as Admin } from './Admin';
 export { default as User } from './User';
+export { default as Article } from './Article';
+export { default as Tool } from './Tool';
+export { default as Lead } from './Lead';

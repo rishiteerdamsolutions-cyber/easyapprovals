@@ -10,6 +10,7 @@ import {
   CheckCircle,
   FileText,
   Upload,
+  Users,
 } from 'lucide-react';
 
 const ADMIN_TOKEN_KEY = 'adminToken';
@@ -24,6 +25,8 @@ export default function AdminDashboard() {
     inReview: number;
     approved: number;
     revenue: number;
+    totalLeads?: number;
+    unreadLeads?: number;
   } | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -89,6 +92,9 @@ export default function AdminDashboard() {
               </Link>
               <Link href="/admin/categories" className="text-gray-600 hover:text-gray-900">
                 Categories
+              </Link>
+              <Link href="/admin/leads" className="text-gray-600 hover:text-gray-900">
+                Leads
               </Link>
               <button onClick={handleLogout} className="text-gray-600 hover:text-gray-900">
                 Logout
@@ -171,6 +177,20 @@ export default function AdminDashboard() {
             <p className="text-3xl font-bold text-green-600">{stats?.approved ?? 0}</p>
             <Link href="/admin/orders?status=approved" className="text-primary-600 text-sm mt-2 inline-block">
               View orders →
+            </Link>
+          </div>
+
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="flex justify-between mb-4">
+              <h2 className="text-lg font-semibold">Leads</h2>
+              <Users className="h-5 w-5 text-purple-600" />
+            </div>
+            <p className="text-3xl font-bold text-purple-600">{stats?.totalLeads ?? 0}</p>
+            {(stats?.unreadLeads ?? 0) > 0 && (
+              <p className="text-sm text-amber-600 mt-1">{stats?.unreadLeads} unread</p>
+            )}
+            <Link href="/admin/leads" className="text-primary-600 text-sm mt-2 inline-block">
+              View leads →
             </Link>
           </div>
         </div>

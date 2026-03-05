@@ -19,7 +19,7 @@ export const navSections: NavSection[] = [
   {
     id: 'start-business',
     label: 'Start a Business',
-    href: '/services?category=startup',
+    href: '/category/startup',
     items: [
       { label: 'Proprietorship Registration', href: '/proprietorship-registration' },
       { label: 'Partnership Firm Registration', href: '/partnership-registration' },
@@ -37,7 +37,7 @@ export const navSections: NavSection[] = [
   {
     id: 'registrations',
     label: 'Registrations & Licenses',
-    href: '/services?category=registrations',
+    href: '/category/registrations',
     items: [
       { label: 'MSME / Udyam Registration', href: '/udyam-registration' },
       { label: 'Import Export Code (IEC)', href: '/import-export-code' },
@@ -57,7 +57,7 @@ export const navSections: NavSection[] = [
   {
     id: 'trademark',
     label: 'Trademark & IP',
-    href: '/services?category=trademark',
+    href: '/category/trademark',
     items: [
       { label: 'Trademark Registration', href: '/trademark-registration' },
       { label: 'Trademark Objection', href: '/trademark-objection' },
@@ -72,7 +72,7 @@ export const navSections: NavSection[] = [
   {
     id: 'gst',
     label: 'GST Services',
-    href: '/services?category=gst',
+    href: '/category/gst',
     items: [
       { label: 'GST Registration', href: '/gst-registration' },
       { label: 'GST Return Filing', href: '/gst-return-filing' },
@@ -89,7 +89,7 @@ export const navSections: NavSection[] = [
   {
     id: 'income-tax',
     label: 'Income Tax',
-    href: '/services?category=income-tax',
+    href: '/category/income-tax',
     items: [
       { label: 'Income Tax E-Filing', href: '/income-tax-filing' },
       { label: 'Business Tax Filing', href: '/business-tax-filing' },
@@ -103,7 +103,7 @@ export const navSections: NavSection[] = [
   {
     id: 'compliance',
     label: 'Compliance',
-    href: '/services?category=mca',
+    href: '/category/mca',
     items: [
       { label: 'Company Compliance', href: '/company-compliance' },
       { label: 'LLP Compliance', href: '/llp-compliance' },
@@ -121,7 +121,7 @@ export const navSections: NavSection[] = [
   {
     id: 'accounting',
     label: 'Accounting',
-    href: '/services?category=compliance',
+    href: '/category/compliance',
     items: [
       { label: 'Bookkeeping Services', href: '/bookkeeping-services' },
       { label: 'CA Support Services', href: '/ca-support-services' },
@@ -133,7 +133,7 @@ export const navSections: NavSection[] = [
   {
     id: 'hr-payroll',
     label: 'HR & Payroll',
-    href: '/services?category=compliance',
+    href: '/category/compliance',
     items: [
       { label: 'HR & Payroll Processing', href: '/hr-payroll-processing' },
       { label: 'PF Return Filing', href: '/pf-return-filing' },
@@ -149,6 +149,7 @@ export const navSections: NavSection[] = [
       { label: 'Learn', href: '/learn' },
       { label: 'Guides', href: '/guides' },
       { label: 'Blog', href: '/blog' },
+      { label: 'Free Tools', href: '/tools' },
     ],
   },
 ];
@@ -198,8 +199,8 @@ export const footerColumns = [
     links: [
       { label: 'Learn', href: '/learn' },
       { label: 'Guides', href: '/guides' },
-      { label: 'Business Ideas', href: '/learn' },
-      { label: 'Legal Guides', href: '/learn' },
+      { label: 'Blog', href: '/blog' },
+      { label: 'Free Tools', href: '/tools' },
       { label: 'Tax Guides', href: '/learn' },
     ],
   },

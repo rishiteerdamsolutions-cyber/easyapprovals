@@ -6,6 +6,7 @@ import { isValidObjectId } from '@/lib/validators';
 import { format } from 'date-fns';
 
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 export async function GET(
   request: NextRequest,
@@ -27,19 +28,19 @@ export async function GET(
       return NextResponse.json({ error: 'Order not found' }, { status: 404 });
     }
 
-    const items = (order.services || []).map((s: { categoryName: string; serviceName: string; price: number; qty: number; total: number }) => ({
-      categoryName: s.categoryName,
-      serviceName: s.serviceName,
-      qty: s.qty,
-      amount: s.price,
-      total: s.total,
+    const items = (order.services || []).map((s: { categoryName?: string; serviceName?: string; price?: number; qty?: number; total?: number }) => ({
+      categoryName: String(s.categoryName || ''),
+      serviceName: String(s.serviceName || ''),
+      qty: Number(s.qty) || 1,
+      amount: Number(s.price) || 0,
+      total: Number(s.total) || 0,
     }));
 
     const pdfBytes = await generateInvoicePDF({
-      orderId: order.orderId,
-      date: format(new Date(order.createdAt), 'dd MMM yyyy'),
-      items,
-      grandTotal: order.totalAmount,
+      orderId: String(order.orderId || 'N/A'),
+      date: order.createdAt ? format(new Date(order.createdAt), 'dd MMM yyyy') : format(new Date(), 'dd MMM yyyy'),
+      items: items.length > 0 ? items : [{ categoryName: 'Service', serviceName: 'Order', qty: 1, amount: order.totalAmount, total: order.totalAmount }],
+      grandTotal: Number(order.totalAmount) || 0,
     });
 
     return new NextResponse(Buffer.from(pdfBytes), {

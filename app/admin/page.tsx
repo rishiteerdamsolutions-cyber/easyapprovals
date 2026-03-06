@@ -96,6 +96,12 @@ export default function AdminDashboard() {
               <Link href="/admin/leads" className="text-gray-600 hover:text-gray-900">
                 Leads
               </Link>
+              <Link href="/admin/cas" className="text-gray-600 hover:text-gray-900">
+                CAs
+              </Link>
+              <Link href="/admin/payouts" className="text-gray-600 hover:text-gray-900">
+                Payouts
+              </Link>
               <button onClick={handleLogout} className="text-gray-600 hover:text-gray-900">
                 Logout
               </button>

@@ -2,9 +2,11 @@ import Link from 'next/link';
 
 interface CTASectionProps {
   serviceName: string;
+  serviceId?: string;
 }
 
-export default function CTASection({ serviceName }: CTASectionProps) {
+export default function CTASection({ serviceName, serviceId }: CTASectionProps) {
+  const orderHref = serviceId ? `/order?addService=${serviceId}` : '/order';
   return (
     <section className="py-8">
       <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-lg p-8 md:p-12 text-white text-center">
@@ -14,7 +16,7 @@ export default function CTASection({ serviceName }: CTASectionProps) {
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
-            href="/order"
+            href={orderHref}
             className="inline-block bg-white text-primary-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 hover:scale-105 transition-all duration-200"
           >
             Get Started

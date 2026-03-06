@@ -32,6 +32,11 @@ export default function DocumentsPage() {
   const id = params.id as string;
   const [order, setOrder] = useState<OrderData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [documentsEmail, setDocumentsEmail] = useState('aideveloperindia@gmail.com');
+
+  useEffect(() => {
+    fetch('/api/config').then((r) => r.json()).then((d) => setDocumentsEmail(d.documentsEmail || 'aideveloperindia@gmail.com')).catch(() => {});
+  }, []);
 
   useEffect(() => {
     async function fetchOrder() {
@@ -91,8 +96,19 @@ export default function DocumentsPage() {
           <p className="text-gray-600">Order ID: {order.orderId}</p>
         </div>
 
+        <div className="bg-primary-50 border-2 border-primary-200 rounded-lg p-6 mb-6">
+          <h2 className="font-semibold text-gray-900 mb-2">Send documents via Gmail/Email</h2>
+          <p className="text-gray-700 mb-4">Attach your documents and email them to us. Use subject line: <strong>Documents - Order {order.orderId}</strong></p>
+          <a
+            href={`mailto:${documentsEmail}?subject=Documents - Order ${order.orderId}`}
+            className="inline-flex items-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700"
+          >
+            Email Documents to {documentsEmail}
+          </a>
+        </div>
+
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="font-semibold text-gray-900 mb-4">Required Documents</h2>
+          <h2 className="font-semibold text-gray-900 mb-4">Required Documents (or upload below)</h2>
           <div className="space-y-4">
             {allDocs.map((doc) => (
               <div key={`${doc.serviceName}-${doc.fieldName}`} className="flex items-center justify-between p-4 border rounded-lg">

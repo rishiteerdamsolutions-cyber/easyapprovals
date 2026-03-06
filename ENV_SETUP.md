@@ -38,3 +38,21 @@ EMAIL_FROM=Easy Approval <onboarding@resend.dev>
 ```
 
 **After updating .env.local, restart the dev server** (`npm run dev`).
+
+---
+
+## Document flow after payment
+
+1. Customer pays → payment success email sent with instructions
+2. Email tells customer to **send documents to** `DOCUMENTS_EMAIL` (aideveloperindia@gmail.com)
+3. Customer emails documents from their Gmail/email with subject: `Documents - Order {orderId}`
+4. You receive documents in your Gmail inbox
+
+---
+
+## CA assignment (Admin)
+
+- Go to **Admin → Orders** → click an order
+- Use **Assign to CA** field: enter CA name or email
+- Click **Assign to CA** to save
+- CA subscription / CA user accounts: **Not built yet** (future feature)

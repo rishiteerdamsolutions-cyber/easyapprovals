@@ -43,13 +43,14 @@ export async function POST(request: NextRequest) {
       customerName: sanitizeInput(customerName),
       customerEmail: sanitizeInput(customerEmail),
       customerPhone: sanitizeInput(customerPhone),
-      services: orderServices.map((s: { serviceId: string; serviceName: string; categoryName: string; price: number; qty: number; total: number }) => ({
+      services: orderServices.map((s: { serviceId: string; serviceName: string; categoryName: string; price: number; qty: number; total: number; professionalFee?: number }) => ({
         serviceId: isValidObjectId(s.serviceId) ? s.serviceId : null,
         serviceName: sanitizeInput(s.serviceName),
         categoryName: sanitizeInput(s.categoryName),
         price: Number(s.price),
         qty: Number(s.qty) || 1,
         total: Number(s.total),
+        professionalFee: Number(s.professionalFee) || 0,
       })),
       totalAmount,
       paymentStatus: 'created',

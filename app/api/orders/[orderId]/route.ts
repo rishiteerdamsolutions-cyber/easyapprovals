@@ -21,8 +21,8 @@ export async function GET(
     await connectDB();
 
     const order = isValidObjectId(id)
-      ? await Order.findById(id).populate('services.serviceId', 'name slug requiredDocuments').lean()
-      : await Order.findOne({ orderId: id }).populate('services.serviceId', 'name slug requiredDocuments').lean();
+      ? await Order.findById(id).populate('services.serviceId', 'name slug requiredDocuments').populate('assignedCaId', 'name email').lean()
+      : await Order.findOne({ orderId: id }).populate('services.serviceId', 'name slug requiredDocuments').populate('assignedCaId', 'name email').lean();
 
     if (!order) {
       return NextResponse.json({ error: 'Order not found' }, { status: 404 });

@@ -56,12 +56,16 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Uint8Array>
   y -= 12;
 
   data.items.forEach((item, idx) => {
+    const cat = String(item.categoryName || '').slice(0, 18);
+    const svc = String(item.serviceName || '').slice(0, 25);
+    const amt = Number(item.amount) || 0;
+    const tot = Number(item.total) || 0;
     drawText(String(idx + 1), colX[0], y, 9);
-    drawText(item.categoryName.slice(0, 18), colX[1], y, 9);
-    drawText(item.serviceName.slice(0, 25), colX[2], y, 9);
-    drawText(String(item.qty), colX[3], y, 9);
-    drawText(`₹${item.amount.toLocaleString()}`, colX[4], y, 9);
-    drawText(`₹${item.total.toLocaleString()}`, colX[5], y, 9);
+    drawText(cat, colX[1], y, 9);
+    drawText(svc, colX[2], y, 9);
+    drawText(String(item.qty ?? 1), colX[3], y, 9);
+    drawText(`₹${amt.toLocaleString()}`, colX[4], y, 9);
+    drawText(`₹${tot.toLocaleString()}`, colX[5], y, 9);
     y -= 10;
   });
 

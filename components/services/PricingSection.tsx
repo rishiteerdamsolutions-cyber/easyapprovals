@@ -7,6 +7,7 @@ interface PricingSectionProps {
   professionalFee: number;
   gstPercent: number;
   price: number; // fallback total
+  serviceId?: string;
 }
 
 export default function PricingSection({
@@ -15,12 +16,14 @@ export default function PricingSection({
   professionalFee,
   gstPercent,
   price,
+  serviceId,
 }: PricingSectionProps) {
   const sc = serviceCharge ?? 0;
   const gf = governmentFee ?? 0;
   const pf = professionalFee ?? 0;
   const subtotal =
     sc > 0 || gf > 0 || pf > 0 ? sc + gf + pf : price;
+  const isQuoteOnRequest = subtotal === 0 && price === 0;
   const gst = Math.round(subtotal * ((gstPercent ?? 18) / 100));
   const finalPrice = subtotal + gst;
 
@@ -30,9 +33,9 @@ export default function PricingSection({
       <div className="bg-primary-50 border-2 border-primary-200 rounded-lg p-6">
         <div className="flex justify-between items-start mb-4">
           <div>
-            <div className="text-sm text-gray-600 mb-1">Starting from</div>
+            <div className="text-sm text-gray-600 mb-1">{isQuoteOnRequest ? '' : 'Starting from'}</div>
             <div className="text-4xl font-bold text-primary-600">
-              ₹{finalPrice.toLocaleString()}
+              {isQuoteOnRequest ? 'Quote on request' : `₹${finalPrice.toLocaleString()}`}
             </div>
           </div>
         </div>
@@ -55,23 +58,27 @@ export default function PricingSection({
               <span className="font-semibold">₹{pf.toLocaleString()}</span>
             </div>
           )}
-          {sc === 0 && gf === 0 && pf === 0 && (
+          {sc === 0 && gf === 0 && pf === 0 && !isQuoteOnRequest && (
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Service Fee</span>
               <span className="font-semibold">₹{subtotal.toLocaleString()}</span>
             </div>
           )}
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-600">GST ({(gstPercent ?? 18)}%)</span>
-            <span className="font-semibold">₹{gst.toLocaleString()}</span>
-          </div>
-          <div className="flex justify-between text-lg font-bold pt-2 border-t border-primary-200">
-            <span>Total</span>
-            <span className="text-primary-600">₹{finalPrice.toLocaleString()}</span>
-          </div>
+          {!isQuoteOnRequest && (
+            <>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">GST ({(gstPercent ?? 18)}%)</span>
+                <span className="font-semibold">₹{gst.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between text-lg font-bold pt-2 border-t border-primary-200">
+                <span>Total</span>
+                <span className="text-primary-600">₹{finalPrice.toLocaleString()}</span>
+              </div>
+            </>
+          )}
         </div>
         <Link
-          href="/order"
+          href={serviceId ? `/order?addService=${serviceId}` : '/order'}
           className="mt-6 w-full bg-primary-600 text-white py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors flex items-center justify-center gap-2"
         >
           Get Started

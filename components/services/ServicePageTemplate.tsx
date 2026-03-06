@@ -81,6 +81,7 @@ export default function ServicePageTemplate({ service, city, subpage, variation 
               professionalFee={service.professionalFee ?? 0}
               gstPercent={service.gstPercent ?? 18}
               price={service.price ?? 0}
+              serviceId={service._id ? String(service._id) : undefined}
             /></div>
             <div id="timeline"><TimelineSection processingTime={service.processingTime || ''} /></div>
             <div id="faq"><FAQSection faqs={service.faqs || []} /></div>
@@ -93,7 +94,7 @@ export default function ServicePageTemplate({ service, city, subpage, variation 
                 </Link>
               )}
             </div>
-            <CTASection serviceName={service.name} />
+            <CTASection serviceName={service.name} serviceId={service._id ? String(service._id) : undefined} />
           </div>
         </div>
       </div>

@@ -15,6 +15,7 @@ interface CartItem {
   price: number;
   qty: number;
   total: number;
+  professionalFee?: number;
 }
 
 interface Category {
@@ -29,6 +30,8 @@ interface Service {
   slug: string;
   description: string;
   price: number;
+  professionalFee?: number;
+  serviceCharge?: number;
   categoryId: { name: string; slug: string };
 }
 
@@ -36,6 +39,7 @@ function OrderSelectContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const categorySlug = searchParams.get('category');
+  const addServiceId = searchParams.get('addService');
   const [categories, setCategories] = useState<Category[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
@@ -46,6 +50,9 @@ function OrderSelectContent() {
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [showCheckout, setShowCheckout] = useState(false);
+  const [showRequestService, setShowRequestService] = useState(false);
+  const [otherServiceDescription, setOtherServiceDescription] = useState('');
+  const [requestingService, setRequestingService] = useState(false);
 
   const loadCart = useCallback(() => {
     if (typeof window === 'undefined') return [];
@@ -106,6 +113,50 @@ function OrderSelectContent() {
     fetchServices();
   }, [selectedCategoryId]);
 
+  // Add service from Get Started link (addService query param)
+  useEffect(() => {
+    if (!addServiceId || categories.length === 0) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`/api/services/${addServiceId}`);
+        if (!res.ok || cancelled) return;
+        const service = await res.json();
+        const sid = String(service._id);
+        setCart((prev) => {
+          const existing = prev.some((c) => c.serviceId === sid);
+          if (existing) return prev;
+          const categoryName = typeof service.categoryId === 'object' ? service.categoryId?.name || '' : '';
+          const pf = service.professionalFee ?? service.serviceCharge ?? 0;
+          const price = Number(service.price) || 0;
+          const item: CartItem = {
+            _id: sid,
+            serviceId: sid,
+            serviceName: service.name,
+            categoryName,
+            price,
+            qty: 1,
+            total: price,
+            professionalFee: pf,
+          };
+          const next = [...prev, item];
+          if (typeof window !== 'undefined') {
+            localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(next));
+          }
+          return next;
+        });
+        if (service.categoryId?._id || service.categoryId) {
+          const catId = typeof service.categoryId === 'object' ? service.categoryId._id : service.categoryId;
+          if (catId) setSelectedCategoryId(catId);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+      if (!cancelled) router.replace('/order' + (categorySlug ? `?category=${categorySlug}` : ''));
+    })();
+    return () => { cancelled = true; };
+  }, [addServiceId, categories.length, categorySlug, router]);
+
   const toggleService = (service: Service) => {
     const existing = cart.find((c) => c.serviceId === service._id);
     const categoryName = typeof service.categoryId === 'object' ? service.categoryId?.name || '' : '';
@@ -114,6 +165,7 @@ function OrderSelectContent() {
       setCart(next);
       saveCart(next);
     } else {
+      const pf = service.professionalFee ?? service.serviceCharge ?? 0;
       const item: CartItem = {
         _id: service._id,
         serviceId: service._id,
@@ -122,6 +174,7 @@ function OrderSelectContent() {
         price: service.price,
         qty: 1,
         total: service.price,
+        professionalFee: pf,
       };
       const next = [...cart, item];
       setCart(next);
@@ -133,7 +186,8 @@ function OrderSelectContent() {
     const next = cart.map((c) => {
       if (c.serviceId !== serviceId) return c;
       const newQty = Math.max(1, c.qty + delta);
-      return { ...c, qty: newQty, total: c.price * newQty };
+      const pf = c.professionalFee ?? 0;
+      return { ...c, qty: newQty, total: c.price * newQty, professionalFee: pf };
     });
     setCart(next);
     saveCart(next);
@@ -142,10 +196,64 @@ function OrderSelectContent() {
   const isInCart = (serviceId: string) => cart.some((c) => c.serviceId === serviceId);
   const getCartQty = (serviceId: string) => cart.find((c) => c.serviceId === serviceId)?.qty ?? 0;
 
-  const grandTotal = cart.reduce((sum, c) => sum + c.total, 0);
+  const isAnyOther = (s: { slug?: string; name?: string }) =>
+    s?.slug === 'any-other' || s?.name === 'Any Other';
+
+  const cartWithoutAnyOther = cart.filter((c) => !isAnyOther({ name: c.serviceName }));
+  const hasAnyOtherInCart = cart.some((c) => c.serviceName === 'Any Other');
+  const grandTotal = cartWithoutAnyOther.reduce((sum, c) => sum + c.total, 0);
+
+  const handleRequestService = async () => {
+    if (!otherServiceDescription.trim()) {
+      alert('Please describe your requirement');
+      return;
+    }
+    if (!customerName.trim() || !customerEmail.trim() || !customerPhone.trim()) {
+      alert('Please fill in Name, Email and Phone');
+      return;
+    }
+    setRequestingService(true);
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: customerName.trim(),
+          email: customerEmail.trim(),
+          phone: customerPhone.trim(),
+          subject: 'Custom Service Request',
+          message: otherServiceDescription.trim(),
+        }),
+      });
+      if (!res.ok) throw new Error('Failed to send request');
+      setShowRequestService(false);
+      setOtherServiceDescription('');
+      setCart((prev) => {
+        const next = prev.filter((c) => c.serviceName !== 'Any Other');
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(next));
+        }
+        return next;
+      });
+      alert("We've received your request. We'll get back to you with a quote shortly.");
+    } catch (e) {
+      alert((e as Error).message || 'Failed to send request');
+    } finally {
+      setRequestingService(false);
+    }
+  };
 
   const handleGenerateOrder = async () => {
-    if (cart.length === 0) return;
+    const toOrder = cart.filter((c) => c.serviceName !== 'Any Other');
+    if (toOrder.length === 0) {
+      alert('Please add at least one paid service to create an order.');
+      return;
+    }
+    const orderTotal = toOrder.reduce((sum, c) => sum + (c.total || 0), 0);
+    if (orderTotal <= 0) {
+      alert('Your cart total must be greater than zero. Please add a paid service.');
+      return;
+    }
     if (!customerName.trim() || !customerEmail.trim() || !customerPhone.trim()) {
       alert('Please fill in Name, Email and Phone');
       return;
@@ -159,20 +267,27 @@ function OrderSelectContent() {
           customerName: customerName.trim(),
           customerEmail: customerEmail.trim(),
           customerPhone: customerPhone.trim(),
-          services: cart.map((c) => ({
-            serviceId: c.serviceId,
+          services: toOrder.map((c) => ({
+            serviceId: String(c.serviceId),
             serviceName: c.serviceName,
             categoryName: c.categoryName,
             price: c.price,
             qty: c.qty,
             total: c.total,
+            professionalFee: (c.professionalFee ?? 0) * c.qty,
           })),
         }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to create order');
-      localStorage.removeItem(CART_STORAGE_KEY);
-      setCart([]);
+      const remaining = cart.filter((c) => c.serviceName === 'Any Other');
+      if (remaining.length > 0) {
+        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(remaining));
+        setCart(remaining);
+      } else {
+        localStorage.removeItem(CART_STORAGE_KEY);
+        setCart([]);
+      }
       router.push(`/order/${data._id}/payment`);
     } catch (e) {
       alert((e as Error).message || 'Failed to create order');
@@ -253,10 +368,23 @@ function OrderSelectContent() {
                           <div>
                             <h3 className="font-semibold text-gray-900">{service.name}</h3>
                             <p className="text-sm text-gray-600 mt-1 line-clamp-2">{service.description}</p>
-                            <div className="mt-2 text-primary-600 font-bold">{formatCurrency(service.price)}</div>
+                            <div className="mt-2 text-primary-600 font-bold">
+                              {isAnyOther(service) ? 'Quote on request' : formatCurrency(service.price)}
+                            </div>
                           </div>
                         </div>
-                        {inCart && (
+                        {inCart && isAnyOther(service) && (
+                          <div className="w-full sm:w-auto">
+                            <textarea
+                              value={otherServiceDescription}
+                              onChange={(e) => setOtherServiceDescription(e.target.value)}
+                              placeholder="Describe your requirement..."
+                              rows={2}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                            />
+                          </div>
+                        )}
+                        {inCart && !isAnyOther(service) && (
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => updateQty(service._id, -1)}
@@ -300,20 +428,41 @@ function OrderSelectContent() {
                       <div key={item.serviceId} className="text-sm flex justify-between">
                         <span className="text-gray-700 truncate flex-1">{item.serviceName}</span>
                         <span className="text-primary-600 font-medium ml-2">
-                          {item.qty} × {formatCurrency(item.price)}
+                          {item.serviceName === 'Any Other' ? 'Quote on request' : `${item.qty} × ${formatCurrency(item.price)}`}
                         </span>
                       </div>
                     ))}
                   </div>
+                  {hasAnyOtherInCart && (
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Describe your requirement *</label>
+                      <textarea
+                        value={otherServiceDescription}
+                        onChange={(e) => setOtherServiceDescription(e.target.value)}
+                        placeholder="What service do you need?"
+                        rows={3}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                      />
+                    </div>
+                  )}
                   <div className="border-t pt-4 mb-4">
                     <div className="flex justify-between font-bold text-lg">
                       <span>Grand Total</span>
                       <span className="text-primary-600">{formatCurrency(grandTotal)}</span>
                     </div>
                   </div>
+                  {hasAnyOtherInCart && (
+                    <button
+                      onClick={() => setShowRequestService(true)}
+                      disabled={!otherServiceDescription.trim()}
+                      className="w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed mb-2"
+                    >
+                      Request service
+                    </button>
+                  )}
                   <button
                     onClick={() => setShowCheckout(true)}
-                    disabled={cart.length === 0}
+                    disabled={cartWithoutAnyOther.length === 0}
                     className="w-full bg-primary-600 text-white py-3 rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Generate Order
@@ -323,6 +472,74 @@ function OrderSelectContent() {
             </div>
           </div>
         </div>
+
+        {/* Request service modal (for Any Other) */}
+        {showRequestService && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Request Custom Service</h2>
+              <p className="text-sm text-gray-600 mb-4">We&apos;ll get back to you with a quote.</p>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                  <input
+                    type="text"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                    placeholder="Your name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                  <input
+                    type="email"
+                    value={customerEmail}
+                    onChange={(e) => setCustomerEmail(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                    placeholder="your@email.com"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone *</label>
+                  <input
+                    type="tel"
+                    value={customerPhone}
+                    onChange={(e) => setCustomerPhone(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                    placeholder="10-digit mobile"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Your requirement *</label>
+                  <textarea
+                    value={otherServiceDescription}
+                    onChange={(e) => setOtherServiceDescription(e.target.value)}
+                    placeholder="Describe what you need..."
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => setShowRequestService(false)}
+                  className="flex-1 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleRequestService}
+                  disabled={requestingService || !otherServiceDescription.trim() || !customerName.trim() || !customerEmail.trim() || !customerPhone.trim()}
+                  className="flex-1 bg-green-600 text-white py-2 rounded-lg font-medium hover:bg-green-700 disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {requestingService ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                  Send Request
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Checkout modal */}
         {showCheckout && (

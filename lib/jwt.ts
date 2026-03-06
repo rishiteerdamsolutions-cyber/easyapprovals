@@ -22,3 +22,24 @@ export function getAdminFromRequest(request: Request): { adminId: string; email:
   if (!token) return null;
   return verifyAdminToken(token);
 }
+
+export function signCaToken(payload: { caId: string; email: string }): string {
+  return jwt.sign({ ...payload, type: 'ca' }, SECRET, { expiresIn: EXPIRY });
+}
+
+export function verifyCaToken(token: string): { caId: string; email: string } | null {
+  try {
+    const decoded = jwt.verify(token, SECRET) as { caId: string; email: string; type?: string };
+    if (decoded.type !== 'ca') return null;
+    return { caId: decoded.caId, email: decoded.email };
+  } catch {
+    return null;
+  }
+}
+
+export function getCaFromRequest(request: Request): { caId: string; email: string } | null {
+  const auth = request.headers.get('authorization');
+  const token = auth?.startsWith('Bearer ') ? auth.slice(7) : null;
+  if (!token) return null;
+  return verifyCaToken(token);
+}

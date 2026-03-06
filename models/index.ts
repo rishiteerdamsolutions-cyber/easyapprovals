@@ -9,3 +9,5 @@ export { default as User } from './User';
 export { default as Article } from './Article';
 export { default as Tool } from './Tool';
 export { default as Lead } from './Lead';
+export { default as CA } from './CA';
+export { default as MonthlyExpenditure } from './MonthlyExpenditure';

@@ -1,47 +1,68 @@
-import { notFound } from 'next/navigation';
-import { Metadata } from 'next';
-import connectDB from '@/lib/mongodb';
-import Service from '@/models/Service';
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
 import ServicePageTemplate from '@/components/services/ServicePageTemplate';
 import { enrichServiceForDisplay } from '@/lib/service-display';
+import type { ServiceForTemplate } from '@/components/services/ServicePageTemplate';
 
-export const dynamic = 'force-dynamic';
+export default function ServiceDetailPage() {
+  const params = useParams();
+  const slug = params?.slug as string;
+  const [service, setService] = useState<ServiceForTemplate | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string };
-}): Promise<Metadata> {
-  const service = await getService(params.slug);
-  if (!service) return { title: 'Service Not Found' };
-  const name = service.name as string;
-  const desc = (service.description as string) || `${name} - Professional service from Easy Approval`;
-  return {
-    title: `${name} | Easy Approval`,
-    description: desc.slice(0, 160),
-  };
-}
+  useEffect(() => {
+    if (!slug) {
+      setLoading(false);
+      setError(true);
+      return;
+    }
+    let cancelled = false;
+    fetch(`/api/services/by-slug/${slug}`)
+      .then((res) => {
+        if (!res.ok) throw new Error('Not found');
+        return res.json();
+      })
+      .then((data) => {
+        if (cancelled) return;
+        try {
+          const enriched = enrichServiceForDisplay(data);
+          setService(enriched);
+        } catch {
+          setService(data as ServiceForTemplate);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setError(true);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, [slug]);
 
-async function getService(slug: string) {
-  await connectDB();
-  const service = await Service.findOne({ slug, isActive: true })
-    .populate('categoryId', 'name slug')
-    .lean();
-  return service ? JSON.parse(JSON.stringify(service)) : null;
-}
-
-export default async function ServiceDetailPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
-  const service = await getService(params.slug);
-
-  if (!service) {
-    notFound();
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin h-10 w-10 border-2 border-primary-600 border-t-transparent rounded-full" />
+      </div>
+    );
   }
 
-  const enrichedService = enrichServiceForDisplay(service);
+  if (error || !service) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="text-center max-w-md">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Service not found</h1>
+          <p className="text-gray-600 mb-6">The service you&apos;re looking for doesn&apos;t exist or may have been removed.</p>
+          <Link href="/services" className="text-primary-600 hover:underline">← Back to Services</Link>
+        </div>
+      </div>
+    );
+  }
 
-  return <ServicePageTemplate service={enrichedService} />;
+  return <ServicePageTemplate service={service} />;
 }

@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { resolveServiceWithVariation, RESERVED_PATHS } from '@/lib/service-resolver';
-import ServicePageTemplate from '@/components/services/ServicePageTemplate';
+import ServicePageTemplate, { type ServiceForTemplate } from '@/components/services/ServicePageTemplate';
 import { enrichServiceForDisplay } from '@/lib/service-display';
 import { getCityName } from '@/lib/locations';
 
@@ -10,19 +10,20 @@ export const dynamic = 'force-dynamic';
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: { slug: string } | Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const slug = params.slug;
+  const paramsResolved = params instanceof Promise ? await params : params;
+  const slug = paramsResolved?.slug ?? '';
   if (RESERVED_PATHS.has(slug)) return { title: 'Easy Approval' };
 
-  const resolved = await resolveServiceWithVariation(slug);
-  if (!resolved) return { title: 'Service Not Found | Easy Approval' };
+  const svc = await resolveServiceWithVariation(slug);
+  if (!svc) return { title: 'Service Not Found | Easy Approval' };
 
-  const name = resolved.service.name as string;
-  const cityDisplay = resolved.city ? getCityName(resolved.city) : undefined;
+  const name = svc.service.name as string;
+  const cityDisplay = svc.city ? getCityName(svc.city) : undefined;
   const titleName = cityDisplay ? `${name} in ${cityDisplay}` : name;
   const desc =
-    (resolved.service.description as string) ||
+    (svc.service.description as string) ||
     `${name} - Professional service from Easy Approval`;
   return {
     title: `${titleName} | Easy Approval`,
@@ -33,22 +34,33 @@ export async function generateMetadata({
 export default async function RootSlugPage({
   params,
 }: {
-  params: { slug: string };
+  params: { slug: string } | Promise<{ slug: string }>;
 }) {
-  const slug = params.slug;
+  const paramsResolved = params instanceof Promise ? await params : params;
+  const slug = paramsResolved?.slug ?? '';
 
   if (RESERVED_PATHS.has(slug)) {
     notFound();
   }
 
-  const resolved = await resolveServiceWithVariation(slug);
-  if (!resolved) {
+  let svcResolved;
+  try {
+    svcResolved = await resolveServiceWithVariation(slug);
+  } catch (e) {
+    console.error('resolveServiceWithVariation error:', e);
     notFound();
   }
+  if (!svcResolved) notFound();
 
-  const enrichedService = enrichServiceForDisplay(resolved.service);
-  const variation = (resolved.service as { variation?: string }).variation;
-  const cityDisplay = resolved.city ? getCityName(resolved.city) : undefined;
+  let enrichedService: ServiceForTemplate;
+  try {
+    enrichedService = enrichServiceForDisplay(svcResolved.service);
+  } catch (e) {
+    console.error('enrichServiceForDisplay error:', e);
+    enrichedService = svcResolved.service as unknown as ServiceForTemplate;
+  }
+  const variation = (svcResolved.service as { variation?: string }).variation;
+  const cityDisplay = svcResolved.city ? getCityName(svcResolved.city) : undefined;
 
   return (
     <ServicePageTemplate

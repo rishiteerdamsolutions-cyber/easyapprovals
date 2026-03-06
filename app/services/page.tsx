@@ -29,42 +29,44 @@ export default function ServicesPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [hasFetched, setHasFetched] = useState(false);
+
+  const retryFetchServices = () => {
+    setLoading(true);
+    const url = selectedCategory === 'all'
+      ? '/api/services'
+      : `/api/services?categoryId=${categories.find((c) => c.slug === selectedCategory)?._id || ''}`;
+    fetch(url)
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => {
+        setServices(Array.isArray(data) ? data : []);
+        setHasFetched(true);
+      })
+      .catch(() => setHasFetched(true))
+      .finally(() => setLoading(false));
+  };
 
   useEffect(() => {
-    async function fetchCategories() {
-      try {
-        const res = await fetch('/api/categories');
-        if (res.ok) {
-          const data = await res.json();
-          setCategories(data);
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    fetchCategories();
+    fetch('/api/categories')
+      .then((res) => res.ok ? res.json() : [])
+      .then((data) => setCategories(Array.isArray(data) ? data : []))
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
-    async function fetchServices() {
-      setLoading(true);
-      try {
-        const url = selectedCategory === 'all'
-          ? '/api/services'
-          : `/api/services?categoryId=${categories.find((c) => c.slug === selectedCategory)?._id || ''}`;
-        const res = await fetch(url);
-        if (res.ok) {
-          const data = await res.json();
-          setServices(data);
-        }
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
-    }
     if (selectedCategory === 'all' || categories.length > 0) {
-      fetchServices();
+      setLoading(true);
+      const url = selectedCategory === 'all'
+        ? '/api/services'
+        : `/api/services?categoryId=${categories.find((c) => c.slug === selectedCategory)?._id || ''}`;
+      fetch(url)
+        .then((res) => (res.ok ? res.json() : []))
+        .then((data) => {
+          setServices(Array.isArray(data) ? data : []);
+          setHasFetched(true);
+        })
+        .catch(() => setHasFetched(true))
+        .finally(() => setLoading(false));
     }
   }, [selectedCategory, categories]);
 
@@ -128,7 +130,7 @@ export default function ServicesPage() {
               return (
                 <Link
                   key={service._id}
-                  href={`/${service.slug}`}
+                  href={`/services/${service.slug}`}
                   className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow"
                 >
                   <div className="flex justify-between items-start mb-4">
@@ -154,9 +156,15 @@ export default function ServicesPage() {
           </div>
         )}
 
-        {!loading && filteredServices.length === 0 && (
+        {!loading && hasFetched && filteredServices.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">Our service catalog is being updated. Please check back shortly.</p>
+            <p className="text-gray-500 text-lg mb-4">Unable to load services. This may be a temporary issue.</p>
+            <button
+              onClick={retryFetchServices}
+              className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+            >
+              Try again
+            </button>
           </div>
         )}
 

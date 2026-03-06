@@ -28,6 +28,10 @@ export async function GET(
       return NextResponse.json({ error: 'Order not found' }, { status: 404 });
     }
 
+    if (order.paymentStatus !== 'paid') {
+      return NextResponse.json({ error: 'Invoice available after successful payment' }, { status: 403 });
+    }
+
     const items = (order.services || []).map((s: { categoryName?: string; serviceName?: string; price?: number; qty?: number; total?: number }) => ({
       categoryName: String(s.categoryName || ''),
       serviceName: String(s.serviceName || ''),

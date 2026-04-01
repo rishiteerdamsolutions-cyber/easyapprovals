@@ -43,15 +43,37 @@ export async function POST(request: NextRequest) {
       customerName: sanitizeInput(customerName),
       customerEmail: sanitizeInput(customerEmail),
       customerPhone: sanitizeInput(customerPhone),
-      services: orderServices.map((s: { serviceId: string; serviceName: string; categoryName: string; price: number; qty: number; total: number; professionalFee?: number }) => ({
-        serviceId: isValidObjectId(s.serviceId) ? s.serviceId : null,
-        serviceName: sanitizeInput(s.serviceName),
-        categoryName: sanitizeInput(s.categoryName),
-        price: Number(s.price),
-        qty: Number(s.qty) || 1,
-        total: Number(s.total),
-        professionalFee: Number(s.professionalFee) || 0,
-      })),
+      services: orderServices.map(
+        (s: {
+          serviceId: string;
+          serviceName: string;
+          categoryName: string;
+          price: number;
+          qty: number;
+          total: number;
+          professionalFee?: number;
+          intakeAnswers?: { questionId: string; question: string; answer: string }[];
+          intakeCustomerNote?: string;
+        }) => ({
+          serviceId: isValidObjectId(s.serviceId) ? s.serviceId : null,
+          serviceName: sanitizeInput(s.serviceName),
+          categoryName: sanitizeInput(s.categoryName),
+          price: Number(s.price),
+          qty: Number(s.qty) || 1,
+          total: Number(s.total),
+          professionalFee: Number(s.professionalFee) || 0,
+          intakeAnswers: Array.isArray(s.intakeAnswers)
+            ? s.intakeAnswers.map((a) => ({
+                questionId: sanitizeInput(String(a.questionId || '')),
+                question: sanitizeInput(String(a.question || '')),
+                answer: sanitizeInput(String(a.answer || '')),
+              }))
+            : undefined,
+          intakeCustomerNote: s.intakeCustomerNote
+            ? sanitizeInput(String(s.intakeCustomerNote))
+            : undefined,
+        })
+      ),
       totalAmount,
       paymentStatus: 'created',
       orderStatus: 'payment_pending',

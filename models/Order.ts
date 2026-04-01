@@ -17,6 +17,12 @@ export type OrderStatus =
 
 export type OrderComplexity = 'low' | 'medium' | 'high';
 
+export interface IOrderServiceIntakeAnswer {
+  questionId: string;
+  question: string;
+  answer: string;
+}
+
 export interface IOrderService {
   serviceId: mongoose.Types.ObjectId;
   serviceName: string;
@@ -25,6 +31,8 @@ export interface IOrderService {
   qty: number;
   total: number;
   professionalFee?: number;
+  intakeAnswers?: IOrderServiceIntakeAnswer[];
+  intakeCustomerNote?: string;
 }
 
 export interface IOrder extends Document {
@@ -48,6 +56,15 @@ export interface IOrder extends Document {
   updatedAt: Date;
 }
 
+const OrderServiceIntakeAnswerSchema = new Schema<IOrderServiceIntakeAnswer>(
+  {
+    questionId: { type: String, required: true },
+    question: { type: String, required: true },
+    answer: { type: String, required: true },
+  },
+  { _id: false }
+);
+
 const OrderServiceSchema = new Schema<IOrderService>(
   {
     serviceId: { type: Schema.Types.ObjectId, ref: 'Service', required: true },
@@ -57,6 +74,8 @@ const OrderServiceSchema = new Schema<IOrderService>(
     qty: { type: Number, required: true, default: 1 },
     total: { type: Number, required: true },
     professionalFee: { type: Number, default: 0 },
+    intakeAnswers: { type: [OrderServiceIntakeAnswerSchema], default: undefined },
+    intakeCustomerNote: { type: String },
   },
   { _id: false }
 );

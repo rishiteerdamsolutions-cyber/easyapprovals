@@ -33,7 +33,16 @@ export default function AdminOrderDetailPage() {
     customerVerified?: boolean;
     caMarkedCompleteAt?: string;
     createdAt?: string;
-    services: { serviceName: string; categoryName: string; price: number; qty: number; total: number; professionalFee?: number }[];
+    services: {
+      serviceName: string;
+      categoryName: string;
+      price: number;
+      qty: number;
+      total: number;
+      professionalFee?: number;
+      intakeAnswers?: { questionId: string; question: string; answer: string }[];
+      intakeCustomerNote?: string;
+    }[];
     documents: { _id: string; fieldName: string; fileUrl: string; qualityStatus: string; rejectionReason?: string }[];
     activityLogs: { action: string; performedBy: string; timestamp: string }[];
   } | null>(null);
@@ -243,6 +252,39 @@ export default function AdminOrderDetailPage() {
                 )}
               </div>
               <a href={`/api/orders/${order._id}/invoice`} className="mt-4 inline-block text-primary-600 hover:underline">Download Invoice</a>
+            </div>
+
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="font-semibold text-gray-900 mb-4">Services and client intake</h2>
+              <div className="space-y-6">
+                {order.services?.map((s, idx) => (
+                  <div key={idx} className="border border-gray-200 rounded-lg p-4 text-sm">
+                    <div className="font-medium text-gray-900">
+                      {s.serviceName}
+                      <span className="text-gray-500 font-normal"> — {s.categoryName}</span>
+                    </div>
+                    <div className="mt-1 text-gray-600">
+                      {s.qty} × {formatCurrency(s.price)} = {formatCurrency(s.total)}
+                    </div>
+                    {s.intakeAnswers && s.intakeAnswers.length > 0 && (
+                      <ul className="mt-3 space-y-2 text-gray-700">
+                        {s.intakeAnswers.map((a) => (
+                          <li key={a.questionId}>
+                            <span className="font-medium text-gray-800">{a.question}</span>
+                            <span className="text-gray-600"> — {a.answer || '—'}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {s.intakeCustomerNote && (
+                      <div className="mt-3 pt-3 border-t border-gray-100">
+                        <div className="text-xs font-medium text-gray-500 uppercase">Additional details</div>
+                        <p className="mt-1 text-gray-700 whitespace-pre-wrap">{s.intakeCustomerNote}</p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className="bg-white rounded-lg shadow p-6">

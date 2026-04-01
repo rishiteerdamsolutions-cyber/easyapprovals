@@ -84,11 +84,13 @@ export default function ServicesPage() {
   }, [selectedCategory, categories, fetchServices]);
 
   const filteredServices = searchQuery
-    ? services.filter(
-        (s) =>
-          s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          s.description?.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+    ? services.filter((s) => {
+        const q = searchQuery.toLowerCase();
+        return (
+          (s.name ?? '').toLowerCase().includes(q) ||
+          (s.description ?? '').toLowerCase().includes(q)
+        );
+      })
     : services;
 
   return (

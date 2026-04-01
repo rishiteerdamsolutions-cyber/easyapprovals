@@ -17,7 +17,12 @@ export async function GET(request: NextRequest) {
       filter.categoryId = categoryId;
     }
 
+    // List view only needs summary fields — full documents were ~200KB+ and could
+    // time out or fail to parse on slow clients.
     const services = await Service.find(filter)
+      .select(
+        'name slug description price serviceCharge governmentFee professionalFee gstPercent categoryId'
+      )
       .populate('categoryId', 'name slug')
       .sort({ name: 1 })
       .lean();
@@ -27,10 +32,19 @@ export async function GET(request: NextRequest) {
     );
   } catch (error) {
     console.error('Services API error:', error);
-    const message =
-      error instanceof Error && error.message.includes('MONGODB_URI')
-        ? 'Database is not configured. Add MONGODB_URI to the server environment.'
-        : 'Failed to fetch services';
+    const errMsg = error instanceof Error ? error.message : '';
+    let message = 'Failed to fetch services';
+    if (errMsg.includes('MONGODB_URI')) {
+      message =
+        'Database is not configured. Add MONGODB_URI to the server environment.';
+    } else if (
+      /ENOTFOUND|ECONNREFUSED|querySrv|MongoNetworkError|SSL|TLS|timed out/i.test(
+        errMsg
+      )
+    ) {
+      message =
+        'Could not reach the database. Verify MONGODB_URI and Atlas Network Access (e.g. 0.0.0.0/0).';
+    }
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

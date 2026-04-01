@@ -34,7 +34,7 @@ export default function Navbar() {
           {/* Logo + brand (pill container + periodic shine on logo) */}
           <Link
             href="/"
-            className="flex shrink-0 items-center gap-2 rounded-full border border-primary-200/80 bg-gradient-to-r from-white via-primary-50/40 to-white py-1 pl-1 pr-4 shadow-sm ring-1 ring-primary-100/60 transition hover:border-primary-300 hover:shadow-md hover:ring-primary-200/80"
+            className="flex shrink-0 items-center gap-2 rounded-full bg-transparent py-1 pl-1 pr-1 transition hover:bg-gray-50/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
           >
             <span className="relative inline-flex h-9 w-9 shrink-0 overflow-hidden rounded-full bg-white shadow-inner ring-2 ring-white">
               <img
@@ -52,6 +52,21 @@ export default function Navbar() {
               </span>
             </span>
             <span className="text-xl font-bold tracking-tight text-primary-600">Easy Approvals</span>
+            {/* Same bg as nav (white) so GIF blends with the bar */}
+            <span
+              className="relative flex h-9 shrink-0 items-center overflow-hidden rounded-full bg-white"
+              aria-hidden
+            >
+              <img
+                src="/topnavbar.gif"
+                alt=""
+                width={168}
+                height={36}
+                className="block h-9 w-auto max-w-[min(168px,34vw)] bg-white object-contain object-left"
+                loading="eager"
+                decoding="async"
+              />
+            </span>
           </Link>
 
           {/* Desktop: Mega Menu */}

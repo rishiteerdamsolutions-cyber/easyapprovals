@@ -105,9 +105,15 @@ export function getPricingDecisionFromExcel(serviceName: string): PricingDecisio
   };
 }
 
-export function applyExcelPricingToService<T extends { name?: string; price?: number; serviceCharge?: number; governmentFee?: number; professionalFee?: number }>(
-  service: T
-): T & { isExtraService: boolean; displayFeeText: string } {
+export function applyExcelPricingToService<
+  T extends Record<string, unknown> & {
+    name?: string;
+    price?: number;
+    serviceCharge?: number;
+    governmentFee?: number;
+    professionalFee?: number;
+  },
+>(service: T): T & { isExtraService: boolean; displayFeeText: string } {
   const name = String(service.name || '');
   const decision = getPricingDecisionFromExcel(name);
 

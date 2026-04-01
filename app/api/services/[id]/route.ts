@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
-import Service from '@/models/Service';
 import { isValidObjectId } from '@/lib/validators';
 import { applyExcelPricingToService } from '@/lib/excel-pricing';
+import mongoose from 'mongoose';
 
 export const dynamic = 'force-dynamic';
+export const maxDuration = 30;
 
 export async function GET(
   request: NextRequest,
@@ -16,20 +17,37 @@ export async function GET(
       return NextResponse.json({ error: 'Invalid service ID' }, { status: 400 });
     }
 
-    await connectDB();
-    const service = await Service.findById(id)
-      .populate('categoryId', 'name slug')
-      .lean();
+    const m = await connectDB();
+    const db = m.connection?.db;
+    if (!db) throw new Error('Database connection not ready');
+
+    const _id = new mongoose.Types.ObjectId(id);
+    const service = await db
+      .collection('services')
+      .findOne({ _id }, { projection: { /* keep full doc for detail pages */ } });
 
     if (!service) {
       return NextResponse.json({ error: 'Service not found' }, { status: 404 });
     }
 
-    return NextResponse.json(applyExcelPricingToService(service));
+    let categoryObj: unknown = service.categoryId;
+    const catIdStr = String(service.categoryId || '');
+    if (isValidObjectId(catIdStr)) {
+      const cat = await db
+        .collection('categories')
+        .findOne(
+          { _id: new mongoose.Types.ObjectId(catIdStr) },
+          { projection: { name: 1, slug: 1 } }
+        );
+      if (cat) categoryObj = { _id: cat._id, name: cat.name, slug: cat.slug };
+    }
+
+    return NextResponse.json(applyExcelPricingToService({ ...service, categoryId: categoryObj }));
   } catch (error) {
-    console.error('Service API error:', error);
+    console.error('Service API error:', error, error instanceof Error ? error.stack : undefined);
+    const errMsg = error instanceof Error ? error.message : '';
     return NextResponse.json(
-      { error: 'Failed to fetch service' },
+      { error: 'Failed to fetch service', details: errMsg ? errMsg.slice(0, 180) : undefined },
       { status: 500 }
     );
   }

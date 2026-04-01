@@ -147,16 +147,6 @@ export default function DashboardPage() {
               </div>
               <ArrowRight className="h-5 w-5 text-gray-400" />
             </Link>
-            <Link
-              href="/services"
-              className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <FileText className="h-5 w-5 text-primary-600" />
-                <span className="font-medium">Browse Services</span>
-              </div>
-              <ArrowRight className="h-5 w-5 text-gray-400" />
-            </Link>
           </div>
         </div>
 

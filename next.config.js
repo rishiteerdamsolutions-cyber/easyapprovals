@@ -7,6 +7,9 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['pdf-lib'],
   },
+  async redirects() {
+    return [{ source: '/services', destination: '/order', permanent: false }];
+  },
 }
 
 module.exports = nextConfig

@@ -8,8 +8,6 @@ import {
   X,
   User,
   LogOut,
-  Search,
-  LayoutGrid,
   ShoppingBag,
   MapPinned,
   LogIn,
@@ -74,22 +72,6 @@ export default function Navbar() {
 
           {/* Desktop: Right side */}
           <div className="hidden md:flex items-center gap-1">
-            <Link
-              href="/services"
-              className={iconNavBtnClass}
-              aria-label="Browse catalog"
-            >
-              <LayoutGrid className="h-5 w-5 shrink-0" aria-hidden />
-              <span className={navTooltipClass} role="tooltip">
-                Browse Catalog
-              </span>
-            </Link>
-            <Link href="/services" className={iconNavBtnClass} aria-label="Search services">
-              <Search className="h-5 w-5 shrink-0" aria-hidden />
-              <span className={navTooltipClass} role="tooltip">
-                Search
-              </span>
-            </Link>
             <Link href="/order" className={iconNavBtnClass} aria-label="Order services">
               <ShoppingBag className="h-5 w-5 shrink-0" aria-hidden />
               <span className={navTooltipClass} role="tooltip">
@@ -169,21 +151,6 @@ export default function Navbar() {
           <div className="md:hidden py-4 border-t border-gray-200">
             <MegaMenu isMobile onLinkClick={() => setIsMenuOpen(false)} />
             <div className="mt-4 pt-4 border-t border-gray-200 space-y-2">
-              <Link
-                href="/services"
-                className="flex items-center gap-2 py-2 text-gray-700 hover:text-primary-600 font-medium"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Browse Catalog
-              </Link>
-              <Link
-                href="/services"
-                className="flex items-center gap-2 py-2 text-gray-600 hover:text-primary-600"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <Search className="h-4 w-4" />
-                Search Services
-              </Link>
               <Link
                 href="/order"
                 className="block py-2 text-gray-700 hover:text-primary-600 font-medium"

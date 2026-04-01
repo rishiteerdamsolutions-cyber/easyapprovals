@@ -58,7 +58,7 @@ export default function ServiceDetailPage() {
         <div className="text-center max-w-md">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Service not found</h1>
           <p className="text-gray-600 mb-6">The service you&apos;re looking for doesn&apos;t exist or may have been removed.</p>
-          <Link href="/services" className="text-primary-600 hover:underline">← Back to Services</Link>
+          <Link href="/order" className="text-primary-600 hover:underline">← Order services</Link>
         </div>
       </div>
     );

@@ -67,8 +67,6 @@ export default async function CategoryIndexPage({
         <nav className="mb-6 text-sm">
           <Link href="/" className="text-gray-500 hover:text-primary-600">Home</Link>
           <span className="mx-2 text-gray-400">/</span>
-          <Link href="/services" className="text-gray-500 hover:text-primary-600">Services</Link>
-          <span className="mx-2 text-gray-400">/</span>
           <span className="text-gray-900">{category.name}</span>
         </nav>
 

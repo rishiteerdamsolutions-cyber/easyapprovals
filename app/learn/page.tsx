@@ -37,8 +37,8 @@ export default async function LearnPage() {
           {articles.length === 0 ? (
             <div className="bg-white rounded-lg shadow p-12 text-center text-gray-500">
               <p>Articles are being added. Check back soon.</p>
-              <Link href="/services" className="text-primary-600 hover:underline mt-4 inline-block">
-                Browse our services →
+              <Link href="/order" className="text-primary-600 hover:underline mt-4 inline-block">
+                Order services →
               </Link>
             </div>
           ) : (

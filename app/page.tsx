@@ -67,12 +67,6 @@ export default async function Home() {
                 Order Services
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
-              <Link
-                href="/services"
-                className="inline-flex cursor-pointer items-center justify-center rounded-lg border-2 border-white/80 bg-white/10 px-8 py-4 font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/20"
-              >
-                Browse Catalog
-              </Link>
             </div>
           </div>
 
@@ -124,10 +118,10 @@ export default async function Home() {
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-bold">Popular Services</h2>
             <Link
-              href="/services"
+              href="/order"
               className="text-primary-600 hover:text-primary-700 font-semibold flex items-center"
             >
-              View All Services
+              Order Services
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </div>

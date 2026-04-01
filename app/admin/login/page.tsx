@@ -41,7 +41,7 @@ export default function AdminLoginPage() {
           <div className="text-center mb-8">
             <div className="flex justify-center mb-4">
               <img
-                src="/easyapprovallogo.png"
+                src="/easyapprovallogo.jpeg"
                 alt="Easy Approval"
                 width={60}
                 height={60}

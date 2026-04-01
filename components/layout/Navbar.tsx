@@ -18,7 +18,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center shrink-0">
             <img
-              src="/easyapprovallogo.png"
+              src="/easyapprovallogo.jpeg"
               alt="Easy Approval"
               width={40}
               height={40}

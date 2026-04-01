@@ -10,7 +10,7 @@ export default function Footer() {
           <div className="lg:col-span-1">
             <div className="flex items-center mb-4">
               <img
-                src="/easyapprovallogo.png"
+                src="/easyapprovallogo.jpeg"
                 alt="Easy Approval"
                 width={40}
                 height={40}

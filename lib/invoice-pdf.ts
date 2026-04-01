@@ -58,19 +58,20 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Uint8Array>
   data.items.forEach((item, idx) => {
     const cat = String(item.categoryName || '').slice(0, 18);
     const svc = String(item.serviceName || '').slice(0, 25);
-    const amt = Number(item.amount) || 0;
-    const tot = Number(item.total) || 0;
+    const amt = Number.isFinite(Number(item.amount)) ? Number(item.amount) : 0;
+    const tot = Number.isFinite(Number(item.total)) ? Number(item.total) : 0;
     drawText(String(idx + 1), colX[0], y, 9);
     drawText(cat, colX[1], y, 9);
     drawText(svc, colX[2], y, 9);
     drawText(String(item.qty ?? 1), colX[3], y, 9);
-    drawText(`₹${amt.toLocaleString()}`, colX[4], y, 9);
-    drawText(`₹${tot.toLocaleString()}`, colX[5], y, 9);
+    drawText(`Rs.${amt.toLocaleString()}`, colX[4], y, 9);
+    drawText(`Rs.${tot.toLocaleString()}`, colX[5], y, 9);
     y -= 10;
   });
 
   y -= 10;
-  drawText(`Grand Total: ₹${data.grandTotal.toLocaleString()}`, 400, y, 12, true);
+  const grandTotal = Number.isFinite(data.grandTotal) ? data.grandTotal : 0;
+  drawText(`Grand Total: Rs.${grandTotal.toLocaleString()}`, 400, y, 12, true);
 
   return pdfDoc.save();
 }

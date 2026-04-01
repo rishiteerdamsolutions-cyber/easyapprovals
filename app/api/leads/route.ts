@@ -23,9 +23,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const validSource = ['contact', 'service_inquiry', 'order_followup', 'blog', 'other'].includes(
-      source
-    )
+    const validSource = [
+      'contact',
+      'service_inquiry',
+      'order_followup',
+      'blog',
+      'cart_intake',
+      'other',
+    ].includes(source)
       ? source
       : 'contact';
 

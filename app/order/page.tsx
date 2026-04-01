@@ -1,17 +1,19 @@
 'use client';
 
-import { useState, useEffect, useCallback, Suspense } from 'react';
+import { useState, useEffect, useCallback, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { formatCurrency } from '@/lib/utils';
 import {
   getIntakeQuestionsForSlug,
-  areIntakeQuestionsAnswered,
   isIntakeCompleteForItem,
+  formatIntakeForLeadMessage,
 } from '@/lib/order-intake-questions';
+import OrderIntakeModal from '@/components/order/OrderIntakeModal';
 import { ShoppingCart, Loader2 } from 'lucide-react';
 
 const CART_STORAGE_KEY = 'easyapproval_cart';
 const INTAKE_STORAGE_KEY = 'easyapproval_cart_intake';
+const LEAD_SENT_STORAGE_KEY = 'easyapproval_cart_lead_sent';
 
 interface CartItem {
   _id: string;
@@ -125,8 +127,10 @@ function OrderSelectContent() {
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [showCheckout, setShowCheckout] = useState(false);
-  const [showRequestService, setShowRequestService] = useState(false);
-  const [requestingService, setRequestingService] = useState(false);
+  const [intakeModalServiceId, setIntakeModalServiceId] = useState<string | null>(null);
+  const [intakeModalSubmitting, setIntakeModalSubmitting] = useState(false);
+  const [leadSentMap, setLeadSentMap] = useState<Record<string, boolean>>({});
+  const cartHydratedRef = useRef(false);
 
   const saveCart = useCallback((items: CartItem[]) => {
     if (typeof window === 'undefined') return;
@@ -149,6 +153,16 @@ function OrderSelectContent() {
       }
       return next;
     });
+    if (cartHydratedRef.current) {
+      setLeadSentMap((prev) => {
+        if (ids.size === 0) return {};
+        const next: Record<string, boolean> = {};
+        for (const id of ids) {
+          if (prev[id]) next[id] = true;
+        }
+        return next;
+      });
+    }
   }, [cart]);
 
   useEffect(() => {
@@ -160,14 +174,38 @@ function OrderSelectContent() {
   }, [intakeAnswers, intakeNotes, intakeReady]);
 
   useEffect(() => {
+    if (typeof window === 'undefined' || !intakeReady) return;
+    localStorage.setItem(LEAD_SENT_STORAGE_KEY, JSON.stringify(leadSentMap));
+  }, [leadSentMap, intakeReady]);
+
+  useEffect(() => {
     const items = loadCartNormalized();
     setCart(items);
     const raw = loadIntakeRaw();
     const picked = pickIntakeForCart(items, raw.answers, raw.notes);
     setIntakeAnswers(picked.answers);
     setIntakeNotes(picked.notes);
+    try {
+      const leadRaw = localStorage.getItem(LEAD_SENT_STORAGE_KEY);
+      const leadParsed = leadRaw ? (JSON.parse(leadRaw) as Record<string, boolean>) : {};
+      const leadsInit: Record<string, boolean> = {};
+      for (const c of items) {
+        if (leadParsed[c.serviceId]) leadsInit[c.serviceId] = true;
+      }
+      setLeadSentMap(leadsInit);
+    } catch {
+      setLeadSentMap({});
+    }
+    cartHydratedRef.current = true;
     setIntakeReady(true);
   }, []);
+
+  useEffect(() => {
+    if (!intakeModalServiceId) return;
+    if (!cart.some((c) => c.serviceId === intakeModalServiceId)) {
+      setIntakeModalServiceId(null);
+    }
+  }, [cart, intakeModalServiceId]);
 
   useEffect(() => {
     async function fetchCategories() {
@@ -241,6 +279,7 @@ function OrderSelectContent() {
           if (typeof window !== 'undefined') {
             localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(next));
           }
+          setIntakeModalServiceId(sid);
           return next;
         });
         if (service.categoryId?._id || service.categoryId) {
@@ -259,6 +298,7 @@ function OrderSelectContent() {
     const existing = cart.find((c) => c.serviceId === service._id);
     const categoryName = typeof service.categoryId === 'object' ? service.categoryId?.name || '' : '';
     if (existing) {
+      setIntakeModalServiceId((prev) => (prev === service._id ? null : prev));
       const next = cart.filter((c) => c.serviceId !== service._id);
       setCart(next);
       saveCart(next);
@@ -279,6 +319,7 @@ function OrderSelectContent() {
       const next = [...cart, item];
       setCart(next);
       saveCart(next);
+      setIntakeModalServiceId(service._id);
     }
   };
 
@@ -306,31 +347,17 @@ function OrderSelectContent() {
     isQuoteService({ slug: c.serviceSlug, name: c.serviceName, isExtraService: c.isQuoteService });
 
   const cartWithoutAnyOther = cart.filter((c) => !cartItemIsQuote(c));
-  const quoteCartItems = cart.filter((c) => cartItemIsQuote(c));
   const grandTotal = cartWithoutAnyOther.reduce((sum, c) => sum + c.total, 0);
 
   const paidIntakeComplete =
     cartWithoutAnyOther.length > 0 &&
     cartWithoutAnyOther.every((c) =>
-      isIntakeCompleteForItem(c.serviceSlug, intakeAnswers[c.serviceId] || {}, intakeNotes[c.serviceId] || '')
+      isIntakeCompleteForItem(
+        c.serviceSlug,
+        intakeAnswers[c.serviceId] || {},
+        intakeNotes[c.serviceId] || ''
+      ) && leadSentMap[c.serviceId]
     );
-
-  const quoteIntakeComplete =
-    quoteCartItems.length > 0 &&
-    quoteCartItems.every((c) =>
-      isIntakeCompleteForItem(c.serviceSlug, intakeAnswers[c.serviceId] || {}, intakeNotes[c.serviceId] || '')
-    );
-
-  const buildQuoteRequestMessage = () =>
-    quoteCartItems
-      .map((c) => {
-        const qs = getIntakeQuestionsForSlug(c.serviceSlug);
-        const ans = intakeAnswers[c.serviceId] || {};
-        const lines = qs.map((q) => `${q.label}: ${(ans[q.id] || '').trim()}`);
-        const note = (intakeNotes[c.serviceId] || '').trim();
-        return [`Service: ${c.serviceName} (${c.categoryName})`, ...lines, '', 'Additional details:', note].join('\n');
-      })
-      .join('\n\n---\n\n');
 
   const setIntakeAnswer = (serviceId: string, questionId: string, value: string) => {
     setIntakeAnswers((prev) => ({
@@ -343,54 +370,70 @@ function OrderSelectContent() {
     setIntakeNotes((prev) => ({ ...prev, [serviceId]: value }));
   };
 
-  const handleRequestService = async () => {
-    if (!quoteIntakeComplete) {
-      alert('Please answer all questions and describe your requirement for each quote item.');
+  const handleIntakeModalSubmit = async () => {
+    const id = intakeModalServiceId;
+    if (!id) return;
+    const item = cart.find((c) => c.serviceId === id);
+    if (!item) return;
+    if (
+      !isIntakeCompleteForItem(
+        item.serviceSlug,
+        intakeAnswers[id] || {},
+        intakeNotes[id] || ''
+      )
+    ) {
+      alert('Please answer every question and add details under “Describe your requirement”.');
       return;
     }
     if (!customerName.trim() || !customerEmail.trim() || !customerPhone.trim()) {
-      alert('Please fill in Name, Email and Phone');
+      alert('Please fill in Name, Email and Phone so we can follow up.');
       return;
     }
-    const message = buildQuoteRequestMessage();
-    setRequestingService(true);
+    setIntakeModalSubmitting(true);
     try {
-      const res = await fetch('/api/contact', {
+      const message = formatIntakeForLeadMessage(
+        item.serviceName,
+        item.categoryName,
+        item.serviceSlug,
+        intakeAnswers[id] || {},
+        intakeNotes[id] || ''
+      );
+      const res = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: customerName.trim(),
           email: customerEmail.trim(),
           phone: customerPhone.trim(),
-          subject: 'Custom / quote service request',
+          subject: `Cart intake: ${item.serviceName}`,
           message,
+          source: 'cart_intake',
+          serviceSlug: item.serviceSlug,
         }),
       });
-      if (!res.ok) throw new Error('Failed to send request');
-      setShowRequestService(false);
-      const quoteIds = new Set(quoteCartItems.map((c) => c.serviceId));
-      setCart((prev) => {
-        const next = prev.filter((c) => !quoteIds.has(c.serviceId));
-        if (typeof window !== 'undefined') {
-          localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(next));
-        }
-        return next;
-      });
-      setIntakeAnswers((prev) => {
-        const next = { ...prev };
-        quoteIds.forEach((id) => delete next[id]);
-        return next;
-      });
-      setIntakeNotes((prev) => {
-        const next = { ...prev };
-        quoteIds.forEach((id) => delete next[id]);
-        return next;
-      });
-      alert("We've received your request. We'll get back to you with a quote shortly.");
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) throw new Error(data.error || 'Failed to save lead');
+      setLeadSentMap((prev) => ({ ...prev, [id]: true }));
+      if (cartItemIsQuote(item)) {
+        const next = cart.filter((c) => c.serviceId !== id);
+        setCart(next);
+        saveCart(next);
+        setIntakeAnswers((prev) => {
+          const n = { ...prev };
+          delete n[id];
+          return n;
+        });
+        setIntakeNotes((prev) => {
+          const n = { ...prev };
+          delete n[id];
+          return n;
+        });
+      }
+      setIntakeModalServiceId(null);
     } catch (e) {
-      alert((e as Error).message || 'Failed to send request');
+      alert((e as Error).message || 'Failed to submit');
     } finally {
-      setRequestingService(false);
+      setIntakeModalSubmitting(false);
     }
   };
 
@@ -401,7 +444,9 @@ function OrderSelectContent() {
       return;
     }
     if (!paidIntakeComplete) {
-      alert('Please answer all questions and describe your requirement for each service in your cart.');
+      alert(
+        'For each service in your cart, open “Answer questions”, fill the form, and click “Submit & send to team” so we receive your intake as a lead. Then you can generate your order.'
+      );
       return;
     }
     const orderTotal = toOrder.reduce((sum, c) => sum + (c.total || 0), 0);
@@ -453,6 +498,11 @@ function OrderSelectContent() {
         return next;
       });
       setIntakeNotes((prev) => {
+        const next = { ...prev };
+        paidIds.forEach((id) => delete next[id]);
+        return next;
+      });
+      setLeadSentMap((prev) => {
         const next = { ...prev };
         paidIds.forEach((id) => delete next[id]);
         return next;
@@ -588,47 +638,45 @@ function OrderSelectContent() {
                 <p className="text-gray-500 text-sm">No services selected</p>
               ) : (
                 <>
-                  <div className="space-y-6 mb-4 max-h-[min(70vh,32rem)] overflow-y-auto pr-1">
+                  <div className="space-y-4 mb-4 max-h-[min(70vh,32rem)] overflow-y-auto pr-1">
                     {cart.map((item) => {
                       const slug = item.serviceSlug;
-                      const qs = getIntakeQuestionsForSlug(slug);
-                      const ans = intakeAnswers[item.serviceId] || {};
-                      const note = intakeNotes[item.serviceId] || '';
-                      const questionsDone = areIntakeQuestionsAnswered(slug, ans);
+                      const complete = isIntakeCompleteForItem(
+                        slug,
+                        intakeAnswers[item.serviceId] || {},
+                        intakeNotes[item.serviceId] || ''
+                      );
+                      const sent = leadSentMap[item.serviceId];
+                      const quote = cartItemIsQuote(item);
                       return (
                         <div key={item.serviceId} className="border border-gray-200 rounded-lg p-3 text-sm">
-                          <div className="flex justify-between gap-2 font-medium text-gray-900 mb-2">
+                          <div className="flex justify-between gap-2 font-medium text-gray-900">
                             <span className="truncate">{item.serviceName}</span>
                             <span className="text-primary-600 shrink-0">
-                              {cartItemIsQuote(item) ? 'Quote' : `${item.qty} × ${formatCurrency(item.price)}`}
+                              {quote ? 'Quote' : `${item.qty} × ${formatCurrency(item.price)}`}
                             </span>
                           </div>
-                          <div className="space-y-2">
-                            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide">Questions for your CA</p>
-                            {qs.map((q) => (
-                              <label key={q.id} className="block">
-                                <span className="text-xs text-gray-600">{q.label}</span>
-                                <textarea
-                                  value={ans[q.id] || ''}
-                                  onChange={(e) => setIntakeAnswer(item.serviceId, q.id, e.target.value)}
-                                  rows={2}
-                                  className="mt-0.5 w-full px-2 py-1.5 border border-gray-300 rounded text-xs"
-                                />
-                              </label>
-                            ))}
-                          </div>
-                          {questionsDone && (
-                            <div className="mt-3">
-                              <label className="block text-xs font-medium text-gray-700">Describe your requirement *</label>
-                              <textarea
-                                value={note}
-                                onChange={(e) => setIntakeNote(item.serviceId, e.target.value)}
-                                placeholder="Anything else the CA should know (no minimum length)"
-                                rows={3}
-                                className="mt-1 w-full px-2 py-1.5 border border-gray-300 rounded text-xs"
-                              />
-                            </div>
+                          {!quote && (
+                            <p className="mt-2 text-xs text-gray-600">
+                              {sent
+                                ? 'Intake sent to team. You can edit and resubmit from the button below.'
+                                : complete
+                                  ? 'Answer the questions in the modal, then submit to send your details to our team.'
+                                  : 'Add this service’s intake answers in the modal (opens when you add to cart).'}
+                            </p>
                           )}
+                          {quote && (
+                            <p className="mt-2 text-xs text-amber-800">
+                              Open the modal to answer questions; after submit we&apos;ll contact you with a quote.
+                            </p>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => setIntakeModalServiceId(item.serviceId)}
+                            className="mt-2 w-full py-2 rounded-lg text-xs font-semibold border border-primary-600 text-primary-700 hover:bg-primary-50"
+                          >
+                            {quote ? 'Answer questions & request quote' : sent ? 'View / edit intake' : 'Answer questions'}
+                          </button>
                         </div>
                       );
                     })}
@@ -639,16 +687,6 @@ function OrderSelectContent() {
                       <span className="text-primary-600">{formatCurrency(grandTotal)}</span>
                     </div>
                   </div>
-                  {quoteCartItems.length > 0 && (
-                    <button
-                      type="button"
-                      onClick={() => setShowRequestService(true)}
-                      disabled={!quoteIntakeComplete}
-                      className="w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed mb-2"
-                    >
-                      Request service
-                    </button>
-                  )}
                   <button
                     type="button"
                     onClick={() => setShowCheckout(true)}
@@ -663,77 +701,36 @@ function OrderSelectContent() {
           </div>
         </div>
 
-        {/* Request service modal (for Any Other) */}
-        {showRequestService && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Request Custom Service</h2>
-              <p className="text-sm text-gray-600 mb-4">We&apos;ll get back to you with a quote.</p>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
-                  <input
-                    type="text"
-                    value={customerName}
-                    onChange={(e) => setCustomerName(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
-                    placeholder="Your name"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
-                  <input
-                    type="email"
-                    value={customerEmail}
-                    onChange={(e) => setCustomerEmail(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
-                    placeholder="your@email.com"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone *</label>
-                  <input
-                    type="tel"
-                    value={customerPhone}
-                    onChange={(e) => setCustomerPhone(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
-                    placeholder="10-digit mobile"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">What we will send</label>
-                  <pre className="w-full px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-xs whitespace-pre-wrap max-h-48 overflow-y-auto">
-                    {buildQuoteRequestMessage()}
-                  </pre>
-                </div>
-              </div>
-              <div className="flex gap-3 mt-6">
-                <button
-                  type="button"
-                  onClick={() => setShowRequestService(false)}
-                  className="flex-1 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={handleRequestService}
-                  disabled={
-                    requestingService ||
-                    !quoteIntakeComplete ||
-                    !customerName.trim() ||
-                    !customerEmail.trim() ||
-                    !customerPhone.trim()
-                  }
-                  className="flex-1 bg-green-600 text-white py-2 rounded-lg font-medium hover:bg-green-700 disabled:opacity-50 flex items-center justify-center gap-2"
-                >
-                  {requestingService ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-                  Send Request
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        {intakeModalServiceId &&
+          (() => {
+            const modalItem = cart.find((c) => c.serviceId === intakeModalServiceId);
+            if (!modalItem) return null;
+            return (
+              <OrderIntakeModal
+                item={{
+                  serviceId: modalItem.serviceId,
+                  serviceName: modalItem.serviceName,
+                  categoryName: modalItem.categoryName,
+                  serviceSlug: modalItem.serviceSlug,
+                }}
+                questions={getIntakeQuestionsForSlug(modalItem.serviceSlug)}
+                answers={intakeAnswers[modalItem.serviceId] || {}}
+                note={intakeNotes[modalItem.serviceId] || ''}
+                onAnswerChange={(qid, v) => setIntakeAnswer(modalItem.serviceId, qid, v)}
+                onNoteChange={(v) => setIntakeNote(modalItem.serviceId, v)}
+                customerName={customerName}
+                customerEmail={customerEmail}
+                customerPhone={customerPhone}
+                onCustomerNameChange={setCustomerName}
+                onCustomerEmailChange={setCustomerEmail}
+                onCustomerPhoneChange={setCustomerPhone}
+                onSubmit={handleIntakeModalSubmit}
+                onClose={() => setIntakeModalServiceId(null)}
+                submitting={intakeModalSubmitting}
+                isQuoteItem={cartItemIsQuote(modalItem)}
+              />
+            );
+          })()}
 
         {/* Checkout modal */}
         {showCheckout && (

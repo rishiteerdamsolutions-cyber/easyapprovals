@@ -1,6 +1,12 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
-export type LeadSource = 'contact' | 'service_inquiry' | 'order_followup' | 'blog' | 'other';
+export type LeadSource =
+  | 'contact'
+  | 'service_inquiry'
+  | 'order_followup'
+  | 'blog'
+  | 'cart_intake'
+  | 'other';
 
 export interface ILead extends Document {
   name: string;
@@ -24,7 +30,7 @@ const LeadSchema = new Schema<ILead>(
     message: { type: String, required: true },
     source: {
       type: String,
-      enum: ['contact', 'service_inquiry', 'order_followup', 'blog', 'other'],
+      enum: ['contact', 'service_inquiry', 'order_followup', 'blog', 'cart_intake', 'other'],
       default: 'contact',
     },
     serviceSlug: { type: String },

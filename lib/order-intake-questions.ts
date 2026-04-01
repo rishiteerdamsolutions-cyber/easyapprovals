@@ -134,3 +134,29 @@ export function isIntakeCompleteForItem(
     (customerNote || '').trim().length > 0
   );
 }
+
+/** Plain-text body for admin leads (cart intake). */
+export function formatIntakeForLeadMessage(
+  serviceName: string,
+  categoryName: string,
+  serviceSlug: string,
+  answers: Record<string, string>,
+  note: string
+): string {
+  const qs = getIntakeQuestionsForSlug(serviceSlug);
+  const lines: string[] = [
+    'Source: Order page — cart intake',
+    '',
+    `Service: ${serviceName}`,
+    `Category: ${categoryName || '—'}`,
+    `Service slug: ${serviceSlug}`,
+    '',
+    '--- Questions & answers ---',
+    '',
+  ];
+  for (const q of qs) {
+    lines.push(`${q.label}: ${(answers[q.id] || '').trim()}`);
+  }
+  lines.push('', '--- Additional details ---', '', (note || '').trim());
+  return lines.join('\n');
+}

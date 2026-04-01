@@ -5,7 +5,8 @@
 export const SITE_LEGAL = {
   brandName: 'Easy Approval',
   legalEntityName:
-    process.env.NEXT_PUBLIC_LEGAL_ENTITY_NAME?.trim() || 'Easy Approval',
+    process.env.NEXT_PUBLIC_LEGAL_ENTITY_NAME?.trim() ||
+    'India Easy Approvals LLP',
   registeredOffice:
     process.env.NEXT_PUBLIC_REGISTERED_OFFICE?.trim() ||
     '[Your full registered office address, India]',

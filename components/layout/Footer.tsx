@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { footerColumns, footerBottomLinks } from '@/lib/navigation-data';
+import { SITE_LEGAL } from '@/lib/site-legal';
 
 export default function Footer() {
   return (
@@ -44,20 +45,33 @@ export default function Footer() {
         </div>
 
         {/* Bottom row */}
-        <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-gray-400">
-            &copy; {new Date().getFullYear()} Easy Approval. All rights reserved.
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
-            {footerBottomLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-sm text-gray-400 hover:text-white transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
+        <div className="mt-8 border-t border-gray-800 pt-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-center text-sm text-gray-400 sm:text-left">
+              &copy; {new Date().getFullYear()} {SITE_LEGAL.legalEntityName}. All rights reserved.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:justify-end sm:gap-6">
+              {footerBottomLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-sm text-gray-400 transition-colors hover:text-white"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+          <div className="mt-6 flex flex-col items-center justify-center gap-2 border-t border-gray-800/80 pt-6 sm:flex-row sm:gap-3">
+            <span className="text-xs text-gray-500">Built by</span>
+            <span className="flex items-center gap-2">
+              <img
+                src="/A-logo.png"
+                alt="AI Developer India"
+                className="h-7 w-auto max-h-8 object-contain opacity-90"
+              />
+              <span className="text-sm font-medium text-gray-300">AI Developer India</span>
+            </span>
           </div>
         </div>
       </div>

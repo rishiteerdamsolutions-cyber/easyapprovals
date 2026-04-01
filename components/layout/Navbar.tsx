@@ -3,8 +3,24 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { signOut, useSession } from 'next-auth/react';
-import { Menu, X, User, LogOut, Search } from 'lucide-react';
+import {
+  Menu,
+  X,
+  User,
+  LogOut,
+  Search,
+  LayoutGrid,
+  ShoppingBag,
+  MapPinned,
+  LogIn,
+} from 'lucide-react';
 import MegaMenu from './MegaMenu';
+
+const navTooltipClass =
+  'pointer-events-none absolute left-1/2 top-full z-[60] mt-2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-900 px-2.5 py-1 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100';
+
+const iconNavBtnClass =
+  'group relative flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-gray-600 transition-colors hover:bg-gray-100 hover:text-primary-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2';
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -34,35 +50,48 @@ export default function Navbar() {
           <MegaMenu />
 
           {/* Desktop: Right side */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-1">
             <Link
               href="/services"
-              className="text-gray-700 hover:text-primary-600 font-medium"
+              className={iconNavBtnClass}
+              aria-label="Browse catalog"
             >
-              Browse Catalog
+              <LayoutGrid className="h-5 w-5 shrink-0" aria-hidden />
+              <span className={navTooltipClass} role="tooltip">
+                Browse Catalog
+              </span>
             </Link>
-            <Link
-              href="/services"
-              className="text-gray-600 hover:text-primary-600 p-2"
-              aria-label="Search services"
-            >
-              <Search className="h-5 w-5" />
+            <Link href="/services" className={iconNavBtnClass} aria-label="Search services">
+              <Search className="h-5 w-5 shrink-0" aria-hidden />
+              <span className={navTooltipClass} role="tooltip">
+                Search
+              </span>
             </Link>
-            <Link href="/order" className="text-gray-700 hover:text-primary-600 font-medium">
-              Order
+            <Link href="/order" className={iconNavBtnClass} aria-label="Order services">
+              <ShoppingBag className="h-5 w-5 shrink-0" aria-hidden />
+              <span className={navTooltipClass} role="tooltip">
+                Order
+              </span>
             </Link>
-            <Link href="/track" className="text-gray-700 hover:text-primary-600 font-medium">
-              Track
+            <Link href="/track" className={iconNavBtnClass} aria-label="Track order">
+              <MapPinned className="h-5 w-5 shrink-0" aria-hidden />
+              <span className={navTooltipClass} role="tooltip">
+                Track
+              </span>
             </Link>
             {session?.user ? (
               <div className="relative">
                 <button
+                  type="button"
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex items-center gap-2 text-gray-700 hover:text-primary-600"
+                  className={`${iconNavBtnClass} ${isUserMenuOpen ? 'bg-primary-50 text-primary-600' : ''}`}
+                  aria-expanded={isUserMenuOpen}
+                  aria-haspopup="true"
+                  aria-label="Account menu"
                 >
-                  <User className="h-5 w-5" />
-                  <span className="max-w-[120px] truncate">
-                    {session.user.name || session.user.email || 'User'}
+                  <User className="h-5 w-5 shrink-0" aria-hidden />
+                  <span className={navTooltipClass} role="tooltip">
+                    {session.user.name || session.user.email || 'Account'}
                   </span>
                 </button>
                 {isUserMenuOpen && (
@@ -86,12 +115,15 @@ export default function Navbar() {
               </div>
             ) : (
               <>
-                <Link href="/login" className="text-gray-700 hover:text-primary-600 font-medium">
-                  Login
+                <Link href="/login" className={iconNavBtnClass} aria-label="Log in">
+                  <LogIn className="h-5 w-5 shrink-0" aria-hidden />
+                  <span className={navTooltipClass} role="tooltip">
+                    Login
+                  </span>
                 </Link>
                 <Link
                   href="/order"
-                  className="bg-primary-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-700 transition-colors"
+                  className="ml-1 whitespace-nowrap rounded-lg bg-primary-600 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
                 >
                   Get Started
                 </Link>

@@ -12,8 +12,7 @@ declare global {
 }
 
 const cached: MongooseCache = global.mongoose ?? { conn: null, promise: null };
-
-if (process.env.NODE_ENV !== 'production') {
+if (!global.mongoose) {
   global.mongoose = cached;
 }
 

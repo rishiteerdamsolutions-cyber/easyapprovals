@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Search, Filter } from 'lucide-react';
 
@@ -21,6 +21,8 @@ interface Service {
   professionalFee?: number;
   gstPercent?: number;
   categoryId: { name: string; slug: string };
+  isExtraService?: boolean;
+  displayFeeText?: string;
 }
 
 export default function ServicesPage() {
@@ -29,22 +31,44 @@ export default function ServicesPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
-  const [hasFetched, setHasFetched] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
-  const retryFetchServices = () => {
+  const fetchServices = useCallback(() => {
+    const url =
+      selectedCategory === 'all'
+        ? '/api/services'
+        : `/api/services?categoryId=${categories.find((c) => c.slug === selectedCategory)?._id || ''}`;
+
     setLoading(true);
-    const url = selectedCategory === 'all'
-      ? '/api/services'
-      : `/api/services?categoryId=${categories.find((c) => c.slug === selectedCategory)?._id || ''}`;
+    setLoadError(null);
     fetch(url)
-      .then((res) => (res.ok ? res.json() : []))
-      .then((data) => {
+      .then(async (res) => {
+        if (!res.ok) {
+          let message = `Could not load services (${res.status}).`;
+          try {
+            const body = await res.json();
+            if (body && typeof body.error === 'string') {
+              message = body.error;
+            }
+          } catch {
+            /* ignore non-JSON error bodies */
+          }
+          setLoadError(message);
+          setServices([]);
+          return;
+        }
+        const data = await res.json();
+        setLoadError(null);
         setServices(Array.isArray(data) ? data : []);
-        setHasFetched(true);
       })
-      .catch(() => setHasFetched(true))
+      .catch((err: unknown) => {
+        const message =
+          err instanceof Error ? err.message : 'Network error while loading services.';
+        setLoadError(message);
+        setServices([]);
+      })
       .finally(() => setLoading(false));
-  };
+  }, [selectedCategory, categories]);
 
   useEffect(() => {
     fetch('/api/categories')
@@ -55,20 +79,9 @@ export default function ServicesPage() {
 
   useEffect(() => {
     if (selectedCategory === 'all' || categories.length > 0) {
-      setLoading(true);
-      const url = selectedCategory === 'all'
-        ? '/api/services'
-        : `/api/services?categoryId=${categories.find((c) => c.slug === selectedCategory)?._id || ''}`;
-      fetch(url)
-        .then((res) => (res.ok ? res.json() : []))
-        .then((data) => {
-          setServices(Array.isArray(data) ? data : []);
-          setHasFetched(true);
-        })
-        .catch(() => setHasFetched(true))
-        .finally(() => setLoading(false));
+      fetchServices();
     }
-  }, [selectedCategory, categories]);
+  }, [selectedCategory, categories, fetchServices]);
 
   const filteredServices = searchQuery
     ? services.filter(
@@ -118,6 +131,32 @@ export default function ServicesPage() {
 
         {loading ? (
           <div className="text-center py-12 text-gray-500">Loading services...</div>
+        ) : loadError ? (
+          <div className="text-center py-12">
+            <p className="text-gray-700 text-lg mb-2 font-medium">Something went wrong</p>
+            <p className="text-gray-500 mb-4">{loadError}</p>
+            <p className="text-sm text-gray-400 mb-6 max-w-md mx-auto">
+              If this keeps happening, the database may be unreachable from the server. For Vercel
+              deployments, set <code className="text-gray-600">MONGODB_URI</code> in Project
+              Settings → Environment Variables and allow your MongoDB network access from
+              everywhere (or Vercel’s IPs).
+            </p>
+            <button
+              type="button"
+              onClick={() => fetchServices()}
+              className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+            >
+              Try again
+            </button>
+          </div>
+        ) : filteredServices.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg mb-4">
+              {searchQuery.trim()
+                ? 'No services match your search.'
+                : 'No services are available in the catalog yet.'}
+            </p>
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredServices.map((service) => {
@@ -127,16 +166,24 @@ export default function ServicesPage() {
               const subtotal = sc + gf + pf > 0 ? sc + gf + pf : service.price;
               const gst = Math.round(subtotal * ((service.gstPercent ?? 18) / 100));
               const total = subtotal + gst;
+              const isExtraService = service.isExtraService === true;
               return (
                 <Link
                   key={service._id}
                   href={`/order?addService=${service._id}`}
-                  className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow"
+                  className={`p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow ${
+                    isExtraService ? 'bg-amber-50 border border-amber-300' : 'bg-white'
+                  }`}
                 >
                   <div className="flex justify-between items-start mb-4">
                     <h3 className="text-lg font-semibold text-gray-900 flex-1">
                       {service.name}
                     </h3>
+                    {isExtraService && (
+                      <span className="ml-2 text-xs font-semibold bg-amber-200 text-amber-900 px-2 py-1 rounded">
+                        Extra service
+                      </span>
+                    )}
                   </div>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                     {service.description}
@@ -144,27 +191,20 @@ export default function ServicesPage() {
                   <div className="pt-4 border-t space-y-1">
                     <div className="flex justify-between text-sm text-gray-600">
                       <span>Total (incl. GST):</span>
-                      <span className="font-bold text-primary-600">₹{total.toLocaleString()}</span>
+                      <span className="font-bold text-primary-600">
+                        {isExtraService ? 'Contact us' : `₹${total.toLocaleString()}`}
+                      </span>
                     </div>
-                    {(sc > 0 || gf > 0 || pf > 0) && (
+                    {isExtraService && (
+                      <p className="text-xs text-amber-700">Price not in Excel source; please confirm manually.</p>
+                    )}
+                    {!isExtraService && (sc > 0 || gf > 0 || pf > 0) && (
                       <p className="text-xs text-gray-500">View breakdown →</p>
                     )}
                   </div>
                 </Link>
               );
             })}
-          </div>
-        )}
-
-        {!loading && hasFetched && filteredServices.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg mb-4">Unable to load services. This may be a temporary issue.</p>
-            <button
-              onClick={retryFetchServices}
-              className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
-            >
-              Try again
-            </button>
           </div>
         )}
 

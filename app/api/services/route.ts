@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Service from '@/models/Service';
 import { isValidObjectId } from '@/lib/validators';
+import { applyExcelPricingToService } from '@/lib/excel-pricing';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,12 +22,15 @@ export async function GET(request: NextRequest) {
       .sort({ name: 1 })
       .lean();
 
-    return NextResponse.json(services);
+    return NextResponse.json(
+      services.map((service) => applyExcelPricingToService(service))
+    );
   } catch (error) {
     console.error('Services API error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch services' },
-      { status: 500 }
-    );
+    const message =
+      error instanceof Error && error.message.includes('MONGODB_URI')
+        ? 'Database is not configured. Add MONGODB_URI to the server environment.'
+        : 'Failed to fetch services';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

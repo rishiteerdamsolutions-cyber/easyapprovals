@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { ArrowRight, Shield, Clock, Users } from "lucide-react";
 import connectDB from "@/lib/mongodb";
+
+const HERO_VIDEO_URL =
+  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260325_094440_a3592600-bd1e-49e5-9bce-a73662061d83.mp4";
 import Category from "@/models/Category";
 import Service from "@/models/Service";
 
@@ -25,52 +28,70 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen">
-      <section className="bg-gradient-to-br from-primary-50 via-white to-secondary-50 py-20 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+      <section className="relative isolate overflow-hidden bg-primary-950 py-20 px-4 min-h-[32rem] md:min-h-[36rem] flex items-center">
+        <div className="absolute inset-0 z-0">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            aria-hidden={true}
+            className="absolute inset-0 h-full w-full object-cover motion-reduce:hidden"
+          >
+            <source src={HERO_VIDEO_URL} type="video/mp4" />
+          </video>
+          <div
+            className="absolute inset-0 bg-gradient-to-br from-primary-950/85 via-primary-900/75 to-black/80 motion-reduce:from-primary-900 motion-reduce:via-primary-800 motion-reduce:to-primary-950"
+            aria-hidden={true}
+          />
+        </div>
+
+        <div className="relative z-10 mx-auto w-full max-w-7xl">
+          <div className="mb-12 text-center">
+            <h1 className="mb-6 text-5xl font-bold text-white drop-shadow-sm md:text-6xl">
               India&apos;s Leading AI-Powered
               <br />
-              <span className="text-primary-600">Corporate Services & Compliance Platform</span>
+              <span className="text-primary-300">Corporate Services & Compliance Platform</span>
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-              Join thousands of businesses who trust Easy Approval to simplify and automate their 
-              MCA, GST, and Income Tax compliance. Our AI-powered platform delivers end-to-end 
+            <p className="mx-auto mb-8 max-w-3xl text-xl text-white/90">
+              Join thousands of businesses who trust Easy Approval to simplify and automate their
+              MCA, GST, and Income Tax compliance. Our AI-powered platform delivers end-to-end
               workflows, paperless filing, and secure cloud storage.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col justify-center gap-4 sm:flex-row">
               <Link
                 href="/order"
-                className="bg-primary-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-primary-700 transition-colors inline-flex items-center justify-center"
+                className="inline-flex items-center justify-center rounded-lg bg-primary-500 px-8 py-4 font-semibold text-white shadow-lg transition-colors hover:bg-primary-400"
               >
                 Order Services
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
               <Link
                 href="/services"
-                className="bg-white text-primary-600 border-2 border-primary-600 px-8 py-4 rounded-lg font-semibold hover:bg-primary-50 transition-colors cursor-pointer"
+                className="inline-flex cursor-pointer items-center justify-center rounded-lg border-2 border-white/80 bg-white/10 px-8 py-4 font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/20"
               >
                 Browse Catalog
               </Link>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
+          <div className="mt-16 grid grid-cols-2 gap-6 md:grid-cols-4">
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary-600">10,000+</div>
-              <div className="text-gray-600 mt-2">Businesses Served</div>
+              <div className="text-4xl font-bold text-primary-200">10,000+</div>
+              <div className="mt-2 text-white/80">Businesses Served</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary-600">150+</div>
-              <div className="text-gray-600 mt-2">Services</div>
+              <div className="text-4xl font-bold text-primary-200">150+</div>
+              <div className="mt-2 text-white/80">Services</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary-600">99%</div>
-              <div className="text-gray-600 mt-2">Success Rate</div>
+              <div className="text-4xl font-bold text-primary-200">99%</div>
+              <div className="mt-2 text-white/80">Success Rate</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary-600">24/7</div>
-              <div className="text-gray-600 mt-2">Support</div>
+              <div className="text-4xl font-bold text-primary-200">24/7</div>
+              <div className="mt-2 text-white/80">Support</div>
             </div>
           </div>
         </div>
@@ -112,7 +133,7 @@ export default async function Home() {
           </div>
           {services.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {services.map((service: { _id: string; name: string; slug: string; description?: string; price?: number }) => (
+            {services.map((service: { _id: string; name: string; slug: string; description?: string; price?: number; isExtraService?: boolean }) => (
               <Link
                 key={service._id}
                 href={`/${service.slug}`}
@@ -122,7 +143,7 @@ export default async function Home() {
                 <p className="text-gray-600 text-sm mb-4 line-clamp-2">{service.description}</p>
                 <div className="flex justify-between items-center">
                   <span className="text-primary-600 font-bold">
-                    ₹{(service.price || 0).toLocaleString()}
+                    {service.isExtraService ? 'Contact us' : `₹${(service.price || 0).toLocaleString()}`}
                   </span>
                 </div>
               </Link>

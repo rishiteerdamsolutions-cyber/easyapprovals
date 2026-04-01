@@ -31,19 +31,27 @@ export default function Navbar() {
     <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center shrink-0">
-            <img
-              src="/easyapprovallogo.jpeg"
-              alt="Easy Approval"
-              width={40}
-              height={40}
-              className="mr-2"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
-              }}
-            />
-            <span className="text-xl font-bold text-primary-600">Easy Approval</span>
+          {/* Logo + brand (pill container + periodic shine on logo) */}
+          <Link
+            href="/"
+            className="flex shrink-0 items-center gap-2 rounded-full border border-primary-200/80 bg-gradient-to-r from-white via-primary-50/40 to-white py-1 pl-1 pr-4 shadow-sm ring-1 ring-primary-100/60 transition hover:border-primary-300 hover:shadow-md hover:ring-primary-200/80"
+          >
+            <span className="relative inline-flex h-9 w-9 shrink-0 overflow-hidden rounded-full bg-white shadow-inner ring-2 ring-white">
+              <img
+                src="/easyapprovallogo.jpeg"
+                alt="Easy Approvals"
+                width={36}
+                height={36}
+                className="h-full w-full rounded-full object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
+              <span className="nav-brand-logo-shine-wrap" aria-hidden>
+                <span className="nav-brand-logo-shine-beam" />
+              </span>
+            </span>
+            <span className="text-xl font-bold tracking-tight text-primary-600">Easy Approvals</span>
           </Link>
 
           {/* Desktop: Mega Menu */}

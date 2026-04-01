@@ -111,5 +111,54 @@ a {
 .animate-stagger > *:nth-child(4) { animation-delay: 150ms; }
 .animate-stagger > *:nth-child(5) { animation-delay: 200ms; }
 
+/* Navbar brand: periodic diagonal shine across logo (top-left → bottom-right) */
+@keyframes nav-brand-logo-shine {
+  0%,
+  68% {
+    transform: translate(-90%, -90%) rotate(38deg);
+    opacity: 0;
+  }
+  70% {
+    opacity: 1;
+  }
+  84% {
+    transform: translate(95%, 95%) rotate(38deg);
+    opacity: 0.88;
+  }
+  88%,
+  100% {
+    transform: translate(120%, 120%) rotate(38deg);
+    opacity: 0;
+  }
+}
+
+.nav-brand-logo-shine-wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 9999px;
+  pointer-events: none;
+}
+
+.nav-brand-logo-shine-beam {
+  position: absolute;
+  top: -40%;
+  left: -90%;
+  width: 70%;
+  height: 220%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0) 38%,
+    rgba(255, 255, 255, 0.55) 48%,
+    rgba(255, 255, 255, 1) 50%,
+    rgba(255, 255, 255, 0.55) 52%,
+    rgba(255, 255, 255, 0) 62%,
+    transparent 100%
+  );
+  filter: blur(0.35px);
+  animation: nav-brand-logo-shine 5.8s ease-in-out infinite;
+}
+
 
 

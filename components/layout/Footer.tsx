@@ -62,16 +62,25 @@ export default function Footer() {
               ))}
             </div>
           </div>
-          <div className="mt-6 flex flex-col items-center justify-center gap-2 border-t border-gray-800/80 pt-6 sm:flex-row sm:gap-3">
+          <div className="mt-6 flex flex-col items-center justify-center gap-3 border-t border-gray-800/80 pt-6 sm:flex-row sm:gap-4">
             <span className="text-xs text-gray-500">Built by</span>
-            <span className="flex items-center gap-2">
+            <Link
+              href="https://www.aideveloperindia.store"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex max-w-full items-center gap-3 rounded-xl border border-gray-600 bg-white px-4 py-2.5 shadow-lg transition hover:border-primary-400 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+            >
               <img
                 src="/A-logo.png"
                 alt="AI Developer India"
-                className="h-7 w-auto max-h-8 object-contain opacity-90"
+                width={160}
+                height={48}
+                className="h-10 w-auto max-h-12 max-w-[min(200px,50vw)] object-contain object-left"
               />
-              <span className="text-sm font-medium text-gray-300">AI Developer India</span>
-            </span>
+              <span className="text-sm font-semibold text-gray-900 sm:text-base">
+                AI Developer India
+              </span>
+            </Link>
           </div>
         </div>
       </div>

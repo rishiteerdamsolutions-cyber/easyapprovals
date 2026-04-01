@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Service from '@/models/Service';
 import { isValidObjectId } from '@/lib/validators';
+import { applyExcelPricingToService } from '@/lib/excel-pricing';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,7 +25,7 @@ export async function GET(
       return NextResponse.json({ error: 'Service not found' }, { status: 404 });
     }
 
-    return NextResponse.json(service);
+    return NextResponse.json(applyExcelPricingToService(service));
   } catch (error) {
     console.error('Service API error:', error);
     return NextResponse.json(

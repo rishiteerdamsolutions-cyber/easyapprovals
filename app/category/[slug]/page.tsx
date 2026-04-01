@@ -6,6 +6,7 @@ import Category from '@/models/Category';
 import Service from '@/models/Service';
 import Article from '@/models/Article';
 import Tool from '@/models/Tool';
+import { applyExcelPricingToService } from '@/lib/excel-pricing';
 
 export const dynamic = 'force-dynamic';
 
@@ -41,7 +42,7 @@ export default async function CategoryIndexPage({
 
   if (!category) notFound();
 
-  const [services, articles, tools] = await Promise.all([
+  const [rawServices, articles, tools] = await Promise.all([
     Service.find({ categoryId: category._id, isActive: true })
       .sort({ name: 1 })
       .select('name slug description price serviceCharge governmentFee gstPercent')
@@ -58,6 +59,7 @@ export default async function CategoryIndexPage({
       .lean(),
     Tool.find({ isActive: true }).limit(5).select('name slug description').lean(),
   ]);
+  const services = rawServices.map((s) => applyExcelPricingToService(s));
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4">
@@ -92,12 +94,21 @@ export default async function CategoryIndexPage({
                 <Link
                   key={String(s._id)}
                   href={`/${s.slug}`}
-                  className="block bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow"
+                  className={`block p-6 rounded-lg shadow hover:shadow-md transition-shadow ${
+                    s.isExtraService ? 'bg-amber-50 border border-amber-300' : 'bg-white'
+                  }`}
                 >
-                  <h3 className="font-semibold text-gray-900 mb-2">{s.name}</h3>
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <h3 className="font-semibold text-gray-900">{s.name}</h3>
+                    {s.isExtraService && (
+                      <span className="text-xs font-semibold bg-amber-200 text-amber-900 px-2 py-1 rounded">
+                        Extra service
+                      </span>
+                    )}
+                  </div>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2">{s.description}</p>
                   <span className="text-primary-600 font-semibold">
-                    ₹{total.toLocaleString()} onwards
+                    {s.isExtraService ? 'Contact us' : `₹${total.toLocaleString()} onwards`}
                   </span>
                 </Link>
               );

@@ -1,0 +1,138 @@
+You are a senior practising Chartered Accountant in India. Your job is to design client intake questions for an online compliance platform. Each question should help you understand scope, risk, timeline, and documents before the engagement.
+
+CRITICAL RULES:
+1. You MUST produce a SEPARATE set of questions for EVERY service listed below. Do not reuse one generic list for a whole category.
+2. Each question must be specific to THAT service (if you could swap the service name for another and the question still fits equally well, rewrite it to be more specific).
+3. Use plain language clients can answer in a short text box (1–3 sentences). Prefer "Yes/No + brief" or "approximate / not sure" where helpful.
+4. Exactly 6 questions per service.
+5. Question `id` must be unique within that service: use lowercase snake_case (e.g. proposed_company_name, gstin_status).
+6. `label` is the full question shown to the user (end with "?" where it is a question).
+
+OUTPUT FORMAT (strict):
+Return a single JSON object. Keys are the service `slug` strings below. Each value is an array of exactly 6 objects:
+{ "id": "string", "label": "string" }
+
+No markdown fences, no commentary—only valid JSON.
+
+Also include these two keys for non-catalog / quote flows (same 6-question structure, generic but practical):
+- "any-other"
+- "unknown"
+
+---
+
+CATALOG (generate questions for each slug):
+
+### Startup & Business Registration (category id: startup)
+- slug: proprietorship-registration | name: Proprietorship Registration
+- slug: partnership-registration | name: Partnership Firm Registration
+- slug: opc-registration | name: One Person Company (OPC) Registration
+- slug: llp-registration | name: Limited Liability Partnership (LLP) Registration
+- slug: private-limited-company-registration | name: Private Limited Company Registration
+- slug: section-8-company-registration | name: Section 8 Company Registration
+- slug: trust-registration | name: Trust Registration
+- slug: public-limited-company-registration | name: Public Limited Company Registration
+- slug: producer-company-registration | name: Producer Company Registration
+- slug: indian-subsidiary-registration | name: Indian Subsidiary Registration
+
+### Registrations & Licenses (category id: registrations)
+- slug: startup-india-registration | name: Startup India Registration
+- slug: trade-license | name: Trade License
+- slug: fssai-registration | name: FSSAI Registration
+- slug: fssai-license | name: FSSAI License
+- slug: import-export-code | name: Import Export Code (IEC)
+- slug: udyam-registration | name: Udyam Registration (MSME)
+- slug: digital-signature-certificate | name: Digital Signature Certificate (DSC)
+- slug: tan-registration | name: TAN Registration
+- slug: pf-registration | name: PF Registration
+- slug: esi-registration | name: ESI Registration
+- slug: iso-registration | name: ISO Registration
+- slug: 12a-registration | name: 12A Registration
+- slug: 80g-registration | name: 80G Registration
+- slug: fcra-registration | name: FCRA Registration
+- slug: fire-license | name: Fire License
+- slug: shop-act-registration | name: Shop Act Registration
+- slug: drug-license | name: Drug License
+- slug: barcode-registration | name: Barcode Registration
+- slug: bis-registration | name: BIS Registration
+- slug: apeda-registration | name: APEDA Registration
+- slug: professional-tax-registration | name: Professional Tax Registration
+- slug: rmc-registration | name: RCMC Registration
+- slug: halal-license-certification | name: Halal License & Certification
+- slug: icegate-registration | name: ICEGATE Registration
+- slug: legal-entity-identifier-code | name: Legal Entity Identifier Code (LEI)
+- slug: darpan-registration | name: Darpan Registration
+- slug: certificate-incumbency | name: Certificate of Incumbency
+- slug: tn-rera-registration-agents | name: TN RERA Registration for Agents
+
+### Trademark & IP (category id: trademark)
+- slug: trademark-registration | name: Trademark Registration
+- slug: trademark-objection | name: Trademark Objection Handling
+- slug: trademark-opposition | name: Trademark Opposition
+- slug: trademark-renewal | name: Trademark Renewal
+- slug: copyright-registration | name: Copyright Registration
+- slug: patent-registration | name: Patent Registration
+- slug: design-registration | name: Design Registration
+- slug: logo-designing | name: Logo Designing
+
+### GST Services (category id: gst)
+- slug: gst-registration | name: GST Registration
+- slug: gst-return-filing | name: GST Return Filing
+- slug: gst-nil-return-filing | name: GST NIL Return Filing
+- slug: gst-amendment | name: GST Amendment
+- slug: gst-revocation | name: GST Revocation
+- slug: gst-lut-form | name: GST LUT Form
+- slug: gst-notice-handling | name: GST Notice Handling
+- slug: gst-annual-return-filing | name: GST Annual Return Filing (GSTR-9)
+- slug: gstr-10-filing | name: GSTR-10 Filing
+- slug: gst-einvoicing-software | name: GST E-Invoicing Software
+- slug: gst-registration-for-foreigners | name: GST Registration for Foreigners
+- slug: virtual-office-gstin | name: Virtual Office + GSTIN
+
+### Income Tax (category id: income-tax)
+- slug: income-tax-filing | name: Income Tax E-Filing
+- slug: business-tax-filing | name: Business Tax Filing
+- slug: company-itr-filing | name: Company ITR Filing
+- slug: tds-return-filing | name: TDS Return Filing
+- slug: income-tax-notice-handling | name: Income Tax Notice Handling
+- slug: revised-itr-return | name: Revised ITR Return (ITR-U)
+- slug: 15ca-15cb-filing | name: 15CA - 15CB Filing
+
+### MCA Compliance (category id: mca)
+- slug: company-compliance | name: Company Compliance
+- slug: llp-compliance | name: LLP Compliance
+- slug: opc-compliance | name: OPC Compliance
+- slug: name-change-company | name: Name Change - Company
+- slug: registered-office-change | name: Registered Office Change
+- slug: din-ekyc-filing | name: DIN eKYC Filing
+- slug: din-reactivation | name: DIN Reactivation
+- slug: director-change | name: Director Change
+- slug: remove-director | name: Remove Director
+- slug: adt-1-filing | name: ADT-1 Filing
+- slug: dpt-3-filing | name: DPT-3 Filing
+- slug: llp-form-11-filing | name: LLP Form 11 Filing
+- slug: dormant-status-filing | name: Dormant Status Filing
+- slug: moa-amendment | name: MOA Amendment
+- slug: aoa-amendment | name: AOA Amendment
+- slug: authorized-capital-increase | name: Authorized Capital Increase
+- slug: share-transfer | name: Share Transfer
+- slug: demat-shares | name: Demat of Shares
+- slug: winding-up-llp | name: Winding Up - LLP
+- slug: winding-up-company | name: Winding Up - Company
+- slug: commencement-inc20a | name: Commencement (INC-20A)
+
+### Compliance & Advisory (category id: compliance)
+- slug: fdi-filing-rbi | name: FDI Filing with RBI
+- slug: fla-return-filing | name: FLA Return Filing
+- slug: fssai-renewal | name: FSSAI Renewal
+- slug: fssai-return-filing | name: FSSAI Return Filing
+- slug: hr-payroll-processing | name: HR & Payroll Processing
+- slug: pf-return-filing | name: PF Return Filing
+- slug: esi-return-filing | name: ESI Return Filing
+- slug: professional-tax-return-filing | name: Professional Tax Return Filing
+- slug: partnership-compliance | name: Partnership Compliance
+- slug: proprietorship-compliance | name: Proprietorship Compliance
+- slug: bookkeeping-services | name: Bookkeeping Services
+- slug: ca-support-services | name: CA Support Services
+- slug: business-plan-services | name: Business Plan Services
+
+END OF CATALOG. Total catalog services: 99, plus any-other and unknown = 101 keys in the JSON object.

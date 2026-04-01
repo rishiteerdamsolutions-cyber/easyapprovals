@@ -1,0 +1,98 @@
+{
+  "gst-registration": [
+    { "id": "business_structure_gst", "label": "What is your business structure (proprietor/LLP/company)?" },
+    { "id": "business_activity_gst", "label": "What goods or services will you supply (brief description)?" },
+    { "id": "turnover_estimate_gst", "label": "What is your expected annual turnover (approximate)?" },
+    { "id": "state_of_registration_gst", "label": "In which state do you want GST registration?" },
+    { "id": "documents_available_gst", "label": "Do you have PAN, Aadhaar, and address proof ready (Yes/No)?" },
+    { "id": "multiple_state_requirement", "label": "Will you operate in multiple states (Yes/No)?" }
+  ],
+  "gst-return-filing": [
+    { "id": "gstin_number", "label": "What is your GSTIN?" },
+    { "id": "return_type_required", "label": "Which returns need filing (GSTR-1, GSTR-3B, etc.)?" },
+    { "id": "filing_period", "label": "For which period do you need return filing?" },
+    { "id": "invoice_data_ready", "label": "Do you have sales and purchase invoices ready (Yes/No)?" },
+    { "id": "previous_filing_status", "label": "Have previous GST returns been filed up to date (Yes/No)?" },
+    { "id": "late_filing_case", "label": "Is there any delay or pending returns (Yes/No + brief)?" }
+  ],
+  "gst-nil-return-filing": [
+    { "id": "gstin_nil", "label": "What is your GSTIN?" },
+    { "id": "filing_period_nil", "label": "For which period are NIL returns to be filed?" },
+    { "id": "no_transactions_confirmation", "label": "Were there absolutely no sales or purchases (Yes/No)?" },
+    { "id": "previous_nil_filing", "label": "Have NIL returns been filed previously (Yes/No)?" },
+    { "id": "pending_returns_nil", "label": "Any backlog of NIL returns pending (Yes/No + count)?" },
+    { "id": "filing_frequency_nil", "label": "Are you filing monthly or quarterly (QRMP)?" }
+  ],
+  "gst-amendment": [
+    { "id": "gstin_amendment", "label": "What is your GSTIN?" },
+    { "id": "type_of_amendment", "label": "What details need amendment (address, name, bank, etc.)?" },
+    { "id": "reason_for_amendment", "label": "Why is this amendment required (brief)?" },
+    { "id": "supporting_documents_amendment", "label": "Do you have supporting documents for the change (Yes/No)?" },
+    { "id": "core_or_noncore_change", "label": "Is this a core field change (like name/address) (Yes/No/Not sure)?" },
+    { "id": "approval_status_previous", "label": "Have you tried amendment earlier (Yes/No)?" }
+  ],
+  "gst-revocation": [
+    { "id": "gstin_revocation", "label": "What is your GSTIN?" },
+    { "id": "cancellation_reason", "label": "Why was your GST registration cancelled (brief)?" },
+    { "id": "revocation_deadline", "label": "Are you within the revocation time limit (Yes/No/Not sure)?" },
+    { "id": "pending_returns_revocation", "label": "Have all pending returns been filed (Yes/No)?" },
+    { "id": "tax_dues_status", "label": "Are there any unpaid GST dues (Yes/No + approx)?" },
+    { "id": "notice_received_revocation", "label": "Did you receive cancellation notice/order (Yes/No)?" }
+  ],
+  "gst-lut-form": [
+    { "id": "gstin_lut", "label": "What is your GSTIN?" },
+    { "id": "export_type_lut", "label": "Are you exporting goods or services without payment of GST (Yes/No)?" },
+    { "id": "previous_lut_filed", "label": "Have you filed LUT in previous years (Yes/No)?" },
+    { "id": "financial_year_lut", "label": "For which financial year do you need LUT?" },
+    { "id": "export_turnover_estimate", "label": "What is your expected export turnover (approximate)?" },
+    { "id": "pending_tax_dues_lut", "label": "Do you have any GST dues pending (Yes/No)?" }
+  ],
+  "gst-notice-handling": [
+    { "id": "gstin_notice", "label": "What is your GSTIN?" },
+    { "id": "notice_type", "label": "What type of GST notice have you received?" },
+    { "id": "notice_issue_date", "label": "What is the date of the notice?" },
+    { "id": "response_deadline_notice", "label": "What is the response deadline?" },
+    { "id": "documents_available_notice", "label": "Do you have supporting documents to respond (Yes/No)?" },
+    { "id": "previous_response_status", "label": "Have you already replied to this notice (Yes/No)?" }
+  ],
+  "gst-annual-return-filing": [
+    { "id": "gstin_annual", "label": "What is your GSTIN?" },
+    { "id": "financial_year_annual", "label": "For which financial year is GSTR-9 to be filed?" },
+    { "id": "turnover_annual", "label": "What is your annual turnover (approximate)?" },
+    { "id": "reconciliation_required", "label": "Do you need reconciliation with books (Yes/No)?" },
+    { "id": "books_and_returns_ready", "label": "Are books of accounts and GST returns ready (Yes/No)?" },
+    { "id": "audit_requirement", "label": "Is GST audit applicable (Yes/No/Not sure)?" }
+  ],
+  "gstr-10-filing": [
+    { "id": "gstin_gstr10", "label": "What is your GSTIN?" },
+    { "id": "date_of_cancellation", "label": "What is the date of GST cancellation?" },
+    { "id": "stock_details_available", "label": "Do you have details of closing stock (Yes/No)?" },
+    { "id": "liability_calculation", "label": "Do you know tax liability on stock (Yes/No/Not sure)?" },
+    { "id": "pending_returns_before_cancellation", "label": "Have all returns before cancellation been filed (Yes/No)?" },
+    { "id": "reason_for_closure", "label": "Why was the business closed (brief)?" }
+  ],
+  "gst-einvoicing-software": [
+    { "id": "turnover_einvoice", "label": "What is your annual turnover (approximate)?" },
+    { "id": "invoice_volume", "label": "Approximate number of invoices generated monthly?" },
+    { "id": "existing_accounting_software", "label": "Which accounting software are you currently using (if any)?" },
+    { "id": "api_integration_needed", "label": "Do you need API integration with ERP (Yes/No)?" },
+    { "id": "multi_gstin_requirement", "label": "Do you have multiple GSTINs to manage (Yes/No)?" },
+    { "id": "real_time_invoice_requirement", "label": "Do you need real-time invoice generation (Yes/No)?" }
+  ],
+  "gst-registration-for-foreigners": [
+    { "id": "foreign_entity_country", "label": "Which country is the business registered in?" },
+    { "id": "business_activity_india", "label": "What activities will be carried out in India?" },
+    { "id": "authorized_signatory_india", "label": "Do you have an authorized signatory in India (Yes/No)?" },
+    { "id": "passport_and_docs_available", "label": "Do you have passport and business registration documents (Yes/No)?" },
+    { "id": "place_of_business_india", "label": "What will be the place of business in India?" },
+    { "id": "gst_registration_type_foreign", "label": "Do you need temporary or regular GST registration (Not sure/brief)?" }
+  ],
+  "virtual-office-gstin": [
+    { "id": "city_preference_virtual", "label": "In which city do you need virtual office for GST?" },
+    { "id": "business_activity_virtual", "label": "What business activity will be conducted?" },
+    { "id": "gst_registration_new_or_existing", "label": "Is this for new GST registration or address change?" },
+    { "id": "document_requirement_virtual", "label": "Do you need complete address proof package (Yes/No)?" },
+    { "id": "multiple_locations_virtual", "label": "Do you need virtual offices in multiple cities (Yes/No)?" },
+    { "id": "duration_requirement_virtual", "label": "For how long do you need the virtual office (approximate duration)?" }
+  ]
+}

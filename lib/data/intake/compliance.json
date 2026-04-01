@@ -1,0 +1,106 @@
+{
+  "fdi-filing-rbi": [
+    { "id": "type_of_fdi_transaction", "label": "What type of FDI transaction is involved (investment/transfer)?" },
+    { "id": "foreign_investor_details", "label": "Provide details of the foreign investor (name and country)?" },
+    { "id": "amount_of_investment", "label": "What is the investment amount (approximate)?" },
+    { "id": "sector_of_investment", "label": "Which sector does your business fall under?" },
+    { "id": "firc_and_bank_details", "label": "Do you have FIRC and bank documents (Yes/No)?" },
+    { "id": "timeline_fdi_filing", "label": "When was the investment received (approximate date)?" }
+  ],
+  "fla-return-filing": [
+    { "id": "company_cin_fla", "label": "What is your Company CIN?" },
+    { "id": "fdi_or_odi_details", "label": "Do you have FDI/ODI transactions to report (Yes/No + brief)?" },
+    { "id": "financial_year_fla", "label": "For which financial year is FLA return required?" },
+    { "id": "financial_statements_available_fla", "label": "Are audited financials available (Yes/No)?" },
+    { "id": "previous_fla_filing", "label": "Have you filed FLA return earlier (Yes/No)?" },
+    { "id": "delay_in_fla_filing", "label": "Is there any delay in filing (Yes/No)?" }
+  ],
+  "fssai-renewal": [
+    { "id": "fssai_license_number", "label": "What is your FSSAI license/registration number?" },
+    { "id": "expiry_date_fssai", "label": "What is the expiry date of your FSSAI license?" },
+    { "id": "business_activity_food_renewal", "label": "Has your food business activity changed (Yes/No)?" },
+    { "id": "documents_ready_fssai_renewal", "label": "Do you have required documents ready (Yes/No)?" },
+    { "id": "any_modification_required", "label": "Do you need any modifications during renewal (Yes/No)?" },
+    { "id": "delay_in_renewal", "label": "Has the license already expired (Yes/No)?" }
+  ],
+  "fssai-return-filing": [
+    { "id": "fssai_number_return", "label": "What is your FSSAI license number?" },
+    { "id": "type_of_return_fssai", "label": "Which return type (annual/half-yearly) is required?" },
+    { "id": "financial_year_fssai", "label": "For which financial year/period is return to be filed?" },
+    { "id": "business_activity_fssai_return", "label": "What is your food business activity (manufacturer/trader)?" },
+    { "id": "sales_data_available", "label": "Do you have sales and production data ready (Yes/No)?" },
+    { "id": "previous_fssai_return_status", "label": "Have previous returns been filed (Yes/No)?" }
+  ],
+  "hr-payroll-processing": [
+    { "id": "employee_count_payroll", "label": "How many employees need payroll processing?" },
+    { "id": "salary_structure_details", "label": "Do you have a defined salary structure (Yes/No)?" },
+    { "id": "payroll_frequency", "label": "What is payroll frequency (monthly/weekly)?" },
+    { "id": "statutory_compliance_needed", "label": "Do you need PF, ESI, PT compliance included (Yes/No)?" },
+    { "id": "attendance_system_available", "label": "Do you have attendance/leave tracking system (Yes/No)?" },
+    { "id": "software_preference_payroll", "label": "Do you prefer any payroll software or need recommendation?" }
+  ],
+  "pf-return-filing": [
+    { "id": "pf_registration_number", "label": "What is your PF registration number?" },
+    { "id": "employee_count_pf_return", "label": "How many employees are covered under PF?" },
+    { "id": "monthly_salary_data_ready", "label": "Do you have monthly salary and PF data ready (Yes/No)?" },
+    { "id": "period_pf_return", "label": "For which period are returns to be filed?" },
+    { "id": "previous_pf_filing_status", "label": "Have previous PF returns been filed (Yes/No)?" },
+    { "id": "late_filing_pf", "label": "Is there any delay or penalty applicable (Yes/No/Not sure)?" }
+  ],
+  "esi-return-filing": [
+    { "id": "esi_registration_number", "label": "What is your ESI registration number?" },
+    { "id": "employee_count_esi_return", "label": "How many employees are covered under ESI?" },
+    { "id": "salary_data_esi_ready", "label": "Do you have employee salary data ready (Yes/No)?" },
+    { "id": "period_esi_return", "label": "For which period is return filing required?" },
+    { "id": "previous_esi_filing_status", "label": "Have previous ESI returns been filed (Yes/No)?" },
+    { "id": "late_filing_esi", "label": "Is there any delay in filing (Yes/No/Not sure)?" }
+  ],
+  "professional-tax-return-filing": [
+    { "id": "pt_registration_number", "label": "What is your Professional Tax registration number?" },
+    { "id": "state_pt_return", "label": "In which state are you filing PT returns?" },
+    { "id": "employee_count_pt_return", "label": "How many employees are covered?" },
+    { "id": "salary_data_pt_ready", "label": "Do you have salary data ready (Yes/No)?" },
+    { "id": "period_pt_return", "label": "For which period is return filing required?" },
+    { "id": "previous_pt_filing_status", "label": "Have previous PT returns been filed (Yes/No)?" }
+  ],
+  "partnership-compliance": [
+    { "id": "firm_registration_details", "label": "Is your partnership firm registered (Yes/No)?" },
+    { "id": "financial_year_partnership", "label": "For which financial year is compliance required?" },
+    { "id": "books_of_accounts_partnership", "label": "Are books of accounts maintained (Yes/No)?" },
+    { "id": "partner_changes_partnership", "label": "Were there any changes in partners (Yes/No)?" },
+    { "id": "itr_filing_status_partnership", "label": "Have partnership ITRs been filed (Yes/No)?" },
+    { "id": "audit_requirement_partnership", "label": "Is audit applicable (Yes/No/Not sure)?" }
+  ],
+  "proprietorship-compliance": [
+    { "id": "owner_pan_proprietorship", "label": "What is the PAN of the proprietor?" },
+    { "id": "business_activity_proprietorship", "label": "What is the nature of business?" },
+    { "id": "books_of_accounts_proprietorship", "label": "Do you maintain books of accounts (Yes/No)?" },
+    { "id": "gst_and_itr_status", "label": "Are GST and ITR filings up to date (Yes/No)?" },
+    { "id": "turnover_proprietorship", "label": "What is the annual turnover (approximate)?" },
+    { "id": "audit_applicability_proprietorship", "label": "Is audit applicable (Yes/No/Not sure)?" }
+  ],
+  "bookkeeping-services": [
+    { "id": "business_type_bookkeeping", "label": "What is your business type (proprietor/company/LLP)?" },
+    { "id": "monthly_transaction_volume", "label": "Approximate number of transactions per month?" },
+    { "id": "accounting_software_used", "label": "Which accounting software are you currently using (if any)?" },
+    { "id": "backlog_bookkeeping", "label": "Do you have backlog bookkeeping pending (Yes/No + period)?" },
+    { "id": "gst_reconciliation_needed", "label": "Do you need GST reconciliation support (Yes/No)?" },
+    { "id": "reporting_requirements", "label": "What reports do you need (P&L, balance sheet, etc.)?" }
+  ],
+  "ca-support-services": [
+    { "id": "type_of_support_required", "label": "What type of CA support do you need (advisory, compliance, etc.)?" },
+    { "id": "business_structure_ca", "label": "What is your business structure?" },
+    { "id": "specific_issue_description", "label": "Describe the issue or requirement briefly?" },
+    { "id": "urgency_of_support", "label": "How urgent is the requirement (timeline)?" },
+    { "id": "documents_available_ca", "label": "Do you have relevant documents ready (Yes/No)?" },
+    { "id": "ongoing_support_requirement", "label": "Do you need one-time or ongoing support?" }
+  ],
+  "business-plan-services": [
+    { "id": "business_idea_description", "label": "Describe your business idea briefly?" },
+    { "id": "target_market_details", "label": "Who is your target market or customers?" },
+    { "id": "funding_requirement", "label": "How much funding do you require (approximate)?" },
+    { "id": "purpose_of_plan", "label": "Why do you need the business plan (investors/loan/internal)?" },
+    { "id": "financial_projections_available", "label": "Do you have any financial projections (Yes/No)?" },
+    { "id": "timeline_business_plan", "label": "By when do you need the business plan?" }
+  ]
+}

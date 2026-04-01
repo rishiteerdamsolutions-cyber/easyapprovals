@@ -1,0 +1,170 @@
+{
+  "company-compliance": [
+    { "id": "company_cin", "label": "What is your Company CIN?" },
+    { "id": "financial_year_compliance", "label": "For which financial year is compliance required?" },
+    { "id": "pending_forms_status", "label": "Do you have any pending ROC filings (Yes/No + brief)?" },
+    { "id": "auditor_appointed_status", "label": "Has the auditor been appointed (Yes/No)?" },
+    { "id": "board_meetings_conducted", "label": "Have board meetings and AGM been conducted (Yes/No)?" },
+    { "id": "books_of_accounts_company", "label": "Are books of accounts maintained and ready (Yes/No)?" }
+  ],
+  "llp-compliance": [
+    { "id": "llp_incorporation_number", "label": "What is your LLPIN?" },
+    { "id": "financial_year_llp", "label": "For which financial year is compliance required?" },
+    { "id": "form11_and_form8_status", "label": "Have Form 11 and Form 8 been filed (Yes/No)?" },
+    { "id": "partner_changes_llp", "label": "Were there any changes in partners during the year (Yes/No)?" },
+    { "id": "books_of_accounts_llp", "label": "Are LLP books of accounts maintained (Yes/No)?" },
+    { "id": "audit_requirement_llp", "label": "Is audit applicable (Yes/No/Not sure)?" }
+  ],
+  "opc-compliance": [
+    { "id": "opc_cin", "label": "What is your OPC CIN?" },
+    { "id": "financial_year_opc", "label": "For which financial year is compliance required?" },
+    { "id": "annual_return_status_opc", "label": "Have annual return and financials been prepared (Yes/No)?" },
+    { "id": "director_kyc_status", "label": "Has director KYC been completed (Yes/No)?" },
+    { "id": "books_of_accounts_opc", "label": "Are books of accounts maintained (Yes/No)?" },
+    { "id": "previous_filing_opc", "label": "Have previous filings been completed on time (Yes/No)?" }
+  ],
+  "name-change-company": [
+    { "id": "current_company_name", "label": "What is the current company name?" },
+    { "id": "proposed_name_options", "label": "Provide 2–3 proposed new names?" },
+    { "id": "reason_for_name_change", "label": "Why do you want to change the company name (brief)?" },
+    { "id": "board_approval_status", "label": "Has board approval been taken (Yes/No)?" },
+    { "id": "shareholder_approval_status", "label": "Will shareholder approval be arranged (Yes/No)?" },
+    { "id": "trademark_check_done", "label": "Have you checked trademark availability for new name (Yes/No)?" }
+  ],
+  "registered-office-change": [
+    { "id": "company_cin_office", "label": "What is your Company CIN?" },
+    { "id": "current_office_address", "label": "What is the current registered office address?" },
+    { "id": "new_office_address", "label": "What is the new address to be updated?" },
+    { "id": "state_change_office", "label": "Is the change within same state or different state?" },
+    { "id": "address_proof_available", "label": "Do you have address proof and NOC (Yes/No)?" },
+    { "id": "board_resolution_ready", "label": "Is board resolution prepared (Yes/No)?" }
+  ],
+  "din-ekyc-filing": [
+    { "id": "director_din_number", "label": "What is the DIN of the director?" },
+    { "id": "aadhaar_pan_linked", "label": "Is Aadhaar linked with PAN (Yes/No)?" },
+    { "id": "mobile_email_access", "label": "Do you have access to registered mobile/email (Yes/No)?" },
+    { "id": "previous_kyc_status", "label": "Was DIN KYC filed last year (Yes/No)?" },
+    { "id": "foreign_director_case", "label": "Is the director a foreign national (Yes/No)?" },
+    { "id": "documents_ready_kyc", "label": "Are ID and address proof ready (Yes/No)?" }
+  ],
+  "din-reactivation": [
+    { "id": "din_number_reactivation", "label": "What is the DIN to be reactivated?" },
+    { "id": "reason_deactivation", "label": "Why was DIN deactivated (non-filing KYC, etc.)?" },
+    { "id": "years_pending_kyc", "label": "How many years of KYC are pending (approximate)?" },
+    { "id": "documents_available_reactivation", "label": "Do you have required KYC documents (Yes/No)?" },
+    { "id": "penalty_awareness", "label": "Are you aware of applicable penalties (Yes/No)?" },
+    { "id": "urgency_reactivation", "label": "By when do you need DIN activated?" }
+  ],
+  "director-change": [
+    { "id": "company_cin_director", "label": "What is your Company CIN?" },
+    { "id": "type_of_change_director", "label": "What change is required (appointment/resignation)?" },
+    { "id": "director_details_new", "label": "Provide details of new/existing director?" },
+    { "id": "din_available_director", "label": "Does the director have DIN (Yes/No)?" },
+    { "id": "board_approval_director", "label": "Has board approval been taken (Yes/No)?" },
+    { "id": "consent_letter_available", "label": "Is consent/resignation letter available (Yes/No)?" }
+  ],
+  "remove-director": [
+    { "id": "company_cin_remove", "label": "What is your Company CIN?" },
+    { "id": "director_to_remove", "label": "Which director is to be removed (name)?" },
+    { "id": "reason_removal", "label": "What is the reason for removal (brief)?" },
+    { "id": "board_shareholder_approval", "label": "Has approval been taken (Yes/No)?" },
+    { "id": "notice_given_director", "label": "Has notice been given to the director (Yes/No)?" },
+    { "id": "documents_ready_removal", "label": "Are required documents prepared (Yes/No)?" }
+  ],
+  "adt-1-filing": [
+    { "id": "company_cin_adt1", "label": "What is your Company CIN?" },
+    { "id": "auditor_name", "label": "What is the name of the appointed auditor?" },
+    { "id": "appointment_date_auditor", "label": "When was the auditor appointed?" },
+    { "id": "agm_date", "label": "What is the AGM date (if applicable)?" },
+    { "id": "auditor_consent_available", "label": "Is auditor consent letter available (Yes/No)?" },
+    { "id": "previous_adt1_status", "label": "Was ADT-1 filed earlier (Yes/No)?" }
+  ],
+  "dpt-3-filing": [
+    { "id": "company_cin_dpt3", "label": "What is your Company CIN?" },
+    { "id": "loan_or_deposit_details", "label": "Do you have loans/deposits to report (Yes/No + brief)?" },
+    { "id": "outstanding_amount", "label": "What is the outstanding amount (approximate)?" },
+    { "id": "auditor_certificate_available", "label": "Is auditor certificate available (Yes/No)?" },
+    { "id": "previous_dpt3_filing", "label": "Was DPT-3 filed last year (Yes/No)?" },
+    { "id": "financial_year_dpt3", "label": "For which financial year is filing required?" }
+  ],
+  "llp-form-11-filing": [
+    { "id": "llpin_form11", "label": "What is your LLPIN?" },
+    { "id": "financial_year_form11", "label": "For which financial year is Form 11 filing required?" },
+    { "id": "number_of_partners_form11", "label": "How many partners are in LLP?" },
+    { "id": "contribution_details_form11", "label": "What is the total contribution (approximate)?" },
+    { "id": "previous_form11_status", "label": "Was Form 11 filed last year (Yes/No)?" },
+    { "id": "delay_in_filing_form11", "label": "Is there any delay in filing (Yes/No)?" }
+  ],
+  "dormant-status-filing": [
+    { "id": "company_cin_dormant", "label": "What is your Company CIN?" },
+    { "id": "reason_dormant", "label": "Why do you want to apply for dormant status?" },
+    { "id": "no_activity_confirmation", "label": "Has the company had no significant transactions (Yes/No)?" },
+    { "id": "pending_compliances_dormant", "label": "Are all compliances completed till date (Yes/No)?" },
+    { "id": "bank_account_status", "label": "Is the bank account active or closed?" },
+    { "id": "future_plan_company", "label": "Do you plan to reactivate later (Yes/No)?" }
+  ],
+  "moa-amendment": [
+    { "id": "company_cin_moa", "label": "What is your Company CIN?" },
+    { "id": "clause_to_amend", "label": "Which clause of MOA needs amendment (object/name/state)?" },
+    { "id": "reason_moa_change", "label": "Why is this amendment required (brief)?" },
+    { "id": "board_resolution_moa", "label": "Has board resolution been passed (Yes/No)?" },
+    { "id": "shareholder_approval_moa", "label": "Will shareholder approval be arranged (Yes/No)?" },
+    { "id": "documents_ready_moa", "label": "Are supporting documents ready (Yes/No)?" }
+  ],
+  "aoa-amendment": [
+    { "id": "company_cin_aoa", "label": "What is your Company CIN?" },
+    { "id": "provisions_to_change", "label": "What provisions in AOA need amendment?" },
+    { "id": "reason_aoa_change", "label": "Why do you want to amend AOA (brief)?" },
+    { "id": "board_resolution_aoa", "label": "Has board resolution been passed (Yes/No)?" },
+    { "id": "shareholder_approval_aoa", "label": "Will shareholder approval be arranged (Yes/No)?" },
+    { "id": "documents_ready_aoa", "label": "Are supporting documents ready (Yes/No)?" }
+  ],
+  "authorized-capital-increase": [
+    { "id": "company_cin_capital", "label": "What is your Company CIN?" },
+    { "id": "current_authorized_capital", "label": "What is current authorized capital?" },
+    { "id": "proposed_authorized_capital", "label": "What is the proposed new capital?" },
+    { "id": "reason_capital_increase", "label": "Why is capital increase required?" },
+    { "id": "board_shareholder_approval_capital", "label": "Has approval been taken (Yes/No)?" },
+    { "id": "stamp_duty_awareness", "label": "Are you aware of stamp duty charges (Yes/No)?" }
+  ],
+  "share-transfer": [
+    { "id": "company_cin_transfer", "label": "What is your Company CIN?" },
+    { "id": "number_of_shares_transfer", "label": "How many shares are to be transferred?" },
+    { "id": "transferor_transferee_details", "label": "Provide details of transferor and transferee?" },
+    { "id": "share_value_transfer", "label": "What is the transfer value per share?" },
+    { "id": "share_certificate_available", "label": "Are share certificates available (Yes/No)?" },
+    { "id": "stamp_duty_paid", "label": "Has stamp duty been paid (Yes/No)?" }
+  ],
+  "demat-shares": [
+    { "id": "company_cin_demat", "label": "What is your Company CIN?" },
+    { "id": "number_of_shareholders", "label": "How many shareholders are there?" },
+    { "id": "is_unlisted_company", "label": "Is the company unlisted (Yes/No)?" },
+    { "id": "existing_demat_status", "label": "Have shares been dematerialized before (Yes/No)?" },
+    { "id": "depository_preference", "label": "Do you have preference for NSDL/CDSL (Yes/No/Not sure)?" },
+    { "id": "documents_ready_demat", "label": "Are incorporation and KYC documents ready (Yes/No)?" }
+  ],
+  "winding-up-llp": [
+    { "id": "llpin_winding", "label": "What is your LLPIN?" },
+    { "id": "reason_winding_llp", "label": "Why do you want to close the LLP?" },
+    { "id": "liabilities_status_llp", "label": "Are all liabilities cleared (Yes/No)?" },
+    { "id": "no_objection_partners", "label": "Do all partners agree to closure (Yes/No)?" },
+    { "id": "bank_account_closed_llp", "label": "Is the bank account closed (Yes/No)?" },
+    { "id": "pending_compliances_llp", "label": "Are all filings completed till date (Yes/No)?" }
+  ],
+  "winding-up-company": [
+    { "id": "company_cin_winding", "label": "What is your Company CIN?" },
+    { "id": "reason_winding_company", "label": "Why do you want to close the company?" },
+    { "id": "liabilities_status_company", "label": "Are all liabilities cleared (Yes/No)?" },
+    { "id": "shareholder_approval_winding", "label": "Do shareholders approve closure (Yes/No)?" },
+    { "id": "bank_account_closed_company", "label": "Is the bank account closed (Yes/No)?" },
+    { "id": "pending_compliances_company", "label": "Are all filings completed till date (Yes/No)?" }
+  ],
+  "commencement-inc20a": [
+    { "id": "company_cin_inc20a", "label": "What is your Company CIN?" },
+    { "id": "date_of_incorporation", "label": "What is the date of incorporation?" },
+    { "id": "capital_deposited_status", "label": "Has share capital been deposited in bank (Yes/No)?" },
+    { "id": "bank_statement_available", "label": "Do you have bank statement proof (Yes/No)?" },
+    { "id": "subscriber_details_confirmed", "label": "Are subscriber details confirmed (Yes/No)?" },
+    { "id": "filing_deadline_inc20a", "label": "Are you within 180 days filing limit (Yes/No/Not sure)?" }
+  ]
+}

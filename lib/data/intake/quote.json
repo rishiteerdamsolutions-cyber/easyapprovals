@@ -1,0 +1,18 @@
+{
+  "any-other": [
+    { "id": "outcome", "label": "In one line: what outcome or deliverable do you expect?" },
+    { "id": "sector", "label": "Industry or sector" },
+    { "id": "location", "label": "State/city relevant to the work (if any)" },
+    { "id": "prior_engagement", "label": "Already working with another CA or portal? (Yes/No + brief)" },
+    { "id": "documents", "label": "What documents or references can you share upfront?" },
+    { "id": "timeline", "label": "Preferred timeline" }
+  ],
+  "unknown": [
+    { "id": "outcome", "label": "In one line: what outcome or deliverable do you expect?" },
+    { "id": "sector", "label": "Industry or sector" },
+    { "id": "location", "label": "State/city relevant to the work (if any)" },
+    { "id": "prior_engagement", "label": "Already working with another CA or portal? (Yes/No + brief)" },
+    { "id": "documents", "label": "What documents or references can you share upfront?" },
+    { "id": "timeline", "label": "Preferred timeline" }
+  ]
+}

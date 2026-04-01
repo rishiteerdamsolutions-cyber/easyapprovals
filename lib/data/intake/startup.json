@@ -1,0 +1,82 @@
+{
+  "proprietorship-registration": [
+    { "id": "business_name_usage", "label": "What name will you use for the proprietorship (same as owner or a trade name)?" },
+    { "id": "owner_pan_available", "label": "Do you have the owner's PAN and Aadhaar ready (Yes/No + brief)?" },
+    { "id": "business_activity_details", "label": "What is the main business activity you plan to carry out (brief description)?" },
+    { "id": "business_address_proof", "label": "What address will you use for the business and do you have proof (rent agreement/ownership)?" },
+    { "id": "bank_account_requirement", "label": "Do you need help opening a current bank account in the business name (Yes/No)?" },
+    { "id": "gst_requirement_check", "label": "Will you require GST registration immediately or expect turnover below threshold (approximate)?" }
+  ],
+  "partnership-registration": [
+    { "id": "number_of_partners", "label": "How many partners will be part of the firm and are all partners Indian residents (Yes/No + brief)?" },
+    { "id": "partnership_deed_preference", "label": "Do you already have a partnership deed drafted or need us to prepare one (Yes/No)?" },
+    { "id": "capital_contribution_details", "label": "What is the approximate capital contribution by each partner (approximate values)?" },
+    { "id": "profit_sharing_ratio", "label": "What profit-sharing ratio do you intend to follow among partners (brief)?" },
+    { "id": "business_activity_scope", "label": "What type of business activities will the partnership undertake (brief description)?" },
+    { "id": "registration_state_location", "label": "In which state will the partnership be registered and operate primarily?" }
+  ],
+  "opc-registration": [
+    { "id": "proposed_company_name", "label": "What are 1–2 proposed names for the OPC (in order of preference)?" },
+    { "id": "sole_member_details", "label": "Who will be the sole member and director (name and residency status)?" },
+    { "id": "nominee_details", "label": "Who will be the nominee for the OPC (name and relation)?" },
+    { "id": "authorized_capital_amount", "label": "What is the proposed authorized capital (approximate amount)?" },
+    { "id": "business_object_description", "label": "What will be the main business objectives of the OPC (brief)?" },
+    { "id": "registered_office_proof", "label": "What address will be used as the registered office and do you have proof (Yes/No)?" }
+  ],
+  "llp-registration": [
+    { "id": "llp_name_options", "label": "What are your preferred LLP names (2 options)?" },
+    { "id": "number_of_partners_llp", "label": "How many partners/designated partners will be part of the LLP?" },
+    { "id": "designated_partner_residency", "label": "Is at least one designated partner an Indian resident (Yes/No)?" },
+    { "id": "capital_contribution_llp", "label": "What is the total capital contribution planned (approximate)?" },
+    { "id": "llp_agreement_requirement", "label": "Do you need us to draft the LLP agreement (Yes/No)?" },
+    { "id": "business_activity_llp", "label": "What business activities will the LLP carry out (brief description)?" }
+  ],
+  "private-limited-company-registration": [
+    { "id": "company_name_choices", "label": "Provide 2 preferred names for the private limited company?" },
+    { "id": "director_details_count", "label": "How many directors will the company have and are all DIN-ready (Yes/No + brief)?" },
+    { "id": "shareholding_pattern", "label": "What will be the shareholding pattern among shareholders (approximate %)?" },
+    { "id": "authorized_capital_private", "label": "What is the proposed authorized capital (approximate amount)?" },
+    { "id": "business_activity_private", "label": "What is the primary business activity of the company (brief)?" },
+    { "id": "registered_office_private", "label": "What address will be used as the registered office and is proof available (Yes/No)?" }
+  ],
+  "section-8-company-registration": [
+    { "id": "objective_of_section8", "label": "What is the main charitable objective (education, NGO, social cause, etc.)?" },
+    { "id": "founder_details_section8", "label": "How many promoters/directors will be involved (minimum 2)?" },
+    { "id": "profit_distribution_confirmation", "label": "Do you confirm profits will not be distributed to members (Yes/No)?" },
+    { "id": "registered_office_section8", "label": "What address will be used as the registered office with proof available (Yes/No)?" },
+    { "id": "expected_funding_sources", "label": "What are the expected funding sources (donations, grants, etc.)?" },
+    { "id": "license_application_support", "label": "Do you need assistance with Section 8 license application (Yes/No)?" }
+  ],
+  "trust-registration": [
+    { "id": "trust_name_choice", "label": "What name do you propose for the trust?" },
+    { "id": "trustees_details_count", "label": "How many trustees will be part of the trust?" },
+    { "id": "trust_objectives", "label": "What are the objectives of the trust (charitable/religious/etc.)?" },
+    { "id": "registered_address_trust", "label": "What address will be used for trust registration (with proof available)?" },
+    { "id": "trust_deed_preparation", "label": "Do you already have a trust deed or need us to draft one (Yes/No)?" },
+    { "id": "initial_trust_property", "label": "Is there any initial property or corpus being settled into the trust (Yes/No + brief)?" }
+  ],
+  "public-limited-company-registration": [
+    { "id": "public_company_name", "label": "Provide 2 preferred names for the public limited company?" },
+    { "id": "minimum_directors_public", "label": "Do you have at least 3 directors ready with documents (Yes/No)?" },
+    { "id": "share_capital_public", "label": "What is the proposed authorized share capital (approximate amount)?" },
+    { "id": "business_activity_public", "label": "What business activities will the company undertake (brief)?" },
+    { "id": "public_issue_plans", "label": "Do you plan to raise funds from the public or list later (Yes/No + brief)?" },
+    { "id": "registered_office_public", "label": "What address will be used as the registered office (proof available Yes/No)?" }
+  ],
+  "producer-company-registration": [
+    { "id": "producer_members_count", "label": "How many producer members (farmers/producers) will be part of the company?" },
+    { "id": "producer_activity_type", "label": "What type of production activity is involved (agriculture, dairy, etc.)?" },
+    { "id": "company_name_producer", "label": "What are the proposed names for the producer company?" },
+    { "id": "authorized_capital_producer", "label": "What is the proposed authorized capital (approximate)?" },
+    { "id": "director_details_producer", "label": "How many directors will be appointed (minimum 5 required)?" },
+    { "id": "registered_office_producer", "label": "What address will be used as the registered office (proof available Yes/No)?" }
+  ],
+  "indian-subsidiary-registration": [
+    { "id": "foreign_parent_details", "label": "What is the name and country of the foreign parent company?" },
+    { "id": "subsidiary_shareholding", "label": "What percentage will the foreign company hold in the Indian subsidiary?" },
+    { "id": "authorized_capital_subsidiary", "label": "What is the proposed authorized capital (approximate amount)?" },
+    { "id": "indian_director_requirement", "label": "Do you have at least one Indian resident director (Yes/No)?" },
+    { "id": "business_activity_subsidiary", "label": "What business activities will the subsidiary carry out in India?" },
+    { "id": "fdi_compliance_requirement", "label": "Will the investment fall under automatic route or require approval (approximate/unsure)?" }
+  ]
+}

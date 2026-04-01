@@ -1,0 +1,226 @@
+{
+  "startup-india-registration": [
+    { "id": "dpiit_eligibility_check", "label": "Is your entity incorporated as a company/LLP and less than 10 years old (Yes/No + brief)?" },
+    { "id": "innovation_description", "label": "How is your business innovative or scalable compared to existing solutions (brief)?" },
+    { "id": "incorporation_certificate_available", "label": "Do you have incorporation/registration certificate ready (Yes/No)?" },
+    { "id": "funding_status", "label": "Have you received any funding or plan to (Yes/No + brief)?" },
+    { "id": "website_or_pitch_deck", "label": "Do you have a website or pitch deck explaining your startup (Yes/No)?" },
+    { "id": "startup_stage", "label": "What stage is your startup at (idea/MVP/revenue generating)?" }
+  ],
+  "trade-license": [
+    { "id": "business_activity_trade", "label": "What type of business activity will be carried out at the premises?" },
+    { "id": "premises_address_trade", "label": "What is the exact address of the business premises?" },
+    { "id": "ownership_or_rent_proof", "label": "Is the premises owned or rented and do you have proof (Yes/No)?" },
+    { "id": "municipal_jurisdiction", "label": "Which municipal authority/area does the premises fall under?" },
+    { "id": "employee_count_trade", "label": "Approximate number of employees working at the premises?" },
+    { "id": "previous_license_status", "label": "Is this a new license or renewal of an existing one (brief)?" }
+  ],
+  "fssai-registration": [
+    { "id": "food_business_type_basic", "label": "What type of food business are you running (home-based, small vendor, etc.)?" },
+    { "id": "annual_turnover_basic", "label": "What is your expected annual turnover (approximate)?" },
+    { "id": "business_location_food", "label": "Where is the food business located (home/shop address)?" },
+    { "id": "product_type_food", "label": "What kind of food products will you handle or sell?" },
+    { "id": "existing_food_license", "label": "Do you already have any FSSAI number (Yes/No)?" },
+    { "id": "owner_id_proof_food", "label": "Do you have owner ID proof and photo ready (Yes/No)?" }
+  ],
+  "fssai-license": [
+    { "id": "food_business_scale", "label": "What is the scale of your food business (state/national level)?" },
+    { "id": "annual_turnover_license", "label": "What is your current or expected annual turnover (approximate)?" },
+    { "id": "manufacturing_or_trading", "label": "Are you manufacturing, trading, or distributing food products?" },
+    { "id": "plant_or_unit_details", "label": "Do you have a manufacturing unit or multiple locations (Yes/No + brief)?" },
+    { "id": "product_categories_food", "label": "What categories of food products are involved?" },
+    { "id": "existing_registration_upgrade", "label": "Are you upgrading from FSSAI registration to license (Yes/No)?" }
+  ],
+  "import-export-code": [
+    { "id": "business_entity_type_iec", "label": "What is your business structure (proprietor/company/LLP)?" },
+    { "id": "pan_and_bank_details", "label": "Do you have PAN and a current bank account in business name (Yes/No)?" },
+    { "id": "import_or_export_activity", "label": "Will you be importing, exporting, or both?" },
+    { "id": "product_type_iec", "label": "What type of goods/services will you import/export?" },
+    { "id": "business_address_iec", "label": "What is your registered business address?" },
+    { "id": "dgft_registration_status", "label": "Have you registered on DGFT portal already (Yes/No)?" }
+  ],
+  "udyam-registration": [
+    { "id": "aadhaar_of_owner", "label": "Do you have Aadhaar of proprietor/partner/director ready (Yes/No)?" },
+    { "id": "business_activity_msme", "label": "Is your business manufacturing or service-based?" },
+    { "id": "investment_amount", "label": "Approximate investment in plant & machinery or equipment?" },
+    { "id": "turnover_msme", "label": "Approximate annual turnover of the business?" },
+    { "id": "existing_msme_registration", "label": "Do you already have Udyog Aadhaar/MSME registration (Yes/No)?" },
+    { "id": "pan_linkage_status", "label": "Is PAN linked with Aadhaar for the applicant (Yes/No)?" }
+  ],
+  "digital-signature-certificate": [
+    { "id": "applicant_type_dsc", "label": "Who is applying for DSC (director/partner/individual)?" },
+    { "id": "dsc_class_type", "label": "Which type of DSC is required (Class 3, signing, etc.)?" },
+    { "id": "id_proof_available", "label": "Do you have PAN and Aadhaar for verification (Yes/No)?" },
+    { "id": "video_verification_ready", "label": "Are you available for video verification (Yes/No)?" },
+    { "id": "email_mobile_access", "label": "Do you have access to mobile/email linked with Aadhaar (Yes/No)?" },
+    { "id": "usb_token_requirement", "label": "Do you need a USB token for DSC storage (Yes/No)?" }
+  ],
+  "tan-registration": [
+    { "id": "entity_type_tan", "label": "What is the type of entity applying for TAN?" },
+    { "id": "tds_applicability", "label": "Will you be deducting TDS on payments (Yes/No + brief)?" },
+    { "id": "pan_of_entity", "label": "Do you have PAN of the entity ready (Yes/No)?" },
+    { "id": "registered_address_tan", "label": "What is the registered address for TAN application?" },
+    { "id": "authorized_person_details", "label": "Who will be the authorized signatory (name/designation)?" },
+    { "id": "existing_tan_status", "label": "Have you applied for TAN earlier (Yes/No)?" }
+  ],
+  "pf-registration": [
+    { "id": "employee_count_pf", "label": "How many employees are currently employed?" },
+    { "id": "salary_structure_pf", "label": "Approximate salary range of employees (basic details)?" },
+    { "id": "company_incorporation_pf", "label": "Is your business registered (company/LLP/proprietor)?" },
+    { "id": "existing_pf_code", "label": "Do you already have a PF registration number (Yes/No)?" },
+    { "id": "date_of_commencement_pf", "label": "When did your business start operations (approximate date)?" },
+    { "id": "compliance_support_needed", "label": "Do you need ongoing PF return filing support (Yes/No)?" }
+  ],
+  "esi-registration": [
+    { "id": "employee_count_esi", "label": "How many employees earn below ESI threshold wages?" },
+    { "id": "business_registration_esi", "label": "Is your business registered with PAN/GST (Yes/No)?" },
+    { "id": "date_of_start_esi", "label": "When did your business start operations?" },
+    { "id": "existing_esi_registration", "label": "Do you already have ESI registration (Yes/No)?" },
+    { "id": "employee_salary_range", "label": "What is the approximate salary range of employees?" },
+    { "id": "esi_return_support", "label": "Do you need help with monthly ESI filings (Yes/No)?" }
+  ],
+  "iso-registration": [
+    { "id": "iso_standard_required", "label": "Which ISO standard do you want (ISO 9001, 27001, etc.)?" },
+    { "id": "business_activity_iso", "label": "What is your business activity for ISO scope?" },
+    { "id": "existing_process_documentation", "label": "Do you have process documentation already (Yes/No)?" },
+    { "id": "number_of_employees_iso", "label": "Approximate number of employees?" },
+    { "id": "certification_timeline", "label": "By when do you need ISO certification?" },
+    { "id": "previous_iso_status", "label": "Is this a fresh certification or renewal (brief)?" }
+  ],
+  "12a-registration": [
+    { "id": "entity_type_12a", "label": "Is your entity a trust, society, or Section 8 company?" },
+    { "id": "registration_documents_12a", "label": "Do you have registration certificate and trust deed/MOA (Yes/No)?" },
+    { "id": "charitable_activities", "label": "What charitable activities are being carried out?" },
+    { "id": "income_sources_12a", "label": "What are your main income sources (donations/grants)?" },
+    { "id": "existing_12a_status", "label": "Have you applied for 12A before (Yes/No)?" },
+    { "id": "books_of_accounts", "label": "Do you maintain books of accounts (Yes/No)?" }
+  ],
+  "80g-registration": [
+    { "id": "12a_registration_status", "label": "Do you already have valid 12A registration (Yes/No)?" },
+    { "id": "donation_usage_details", "label": "How will donations be utilized (brief)?" },
+    { "id": "ngo_activity_details", "label": "What activities does your NGO currently perform?" },
+    { "id": "financial_statements_available", "label": "Do you have financial statements ready (Yes/No)?" },
+    { "id": "existing_80g_status", "label": "Have you applied for 80G earlier (Yes/No)?" },
+    { "id": "compliance_history", "label": "Have you filed ITRs and complied regularly (Yes/No)?" }
+  ],
+  "fcra-registration": [
+    { "id": "ngo_registration_year", "label": "In which year was your NGO registered?" },
+    { "id": "foreign_donation_intent", "label": "Do you plan to receive foreign donations (Yes/No)?" },
+    { "id": "activity_track_record", "label": "Have you completed 3 years of active operations (Yes/No)?" },
+    { "id": "bank_account_fcra", "label": "Do you have an SBI FCRA designated account (Yes/No)?" },
+    { "id": "key_members_details", "label": "Provide details of key governing members (brief)?" },
+    { "id": "existing_fcra_status", "label": "Have you applied or been rejected earlier (Yes/No)?" }
+  ],
+  "fire-license": [
+    { "id": "premises_type_fire", "label": "What type of premises (commercial/industrial/residential)?" },
+    { "id": "area_size_fire", "label": "What is the total area of the premises (approximate sq ft)?" },
+    { "id": "fire_safety_equipment", "label": "Do you have fire safety equipment installed (Yes/No)?" },
+    { "id": "building_plan_approval", "label": "Is the building plan approved by authorities (Yes/No)?" },
+    { "id": "occupancy_type_fire", "label": "What is the occupancy/use of the building?" },
+    { "id": "previous_fire_noc", "label": "Is this a new application or renewal (brief)?" }
+  ],
+  "shop-act-registration": [
+    { "id": "shop_business_type", "label": "What type of shop or establishment are you registering?" },
+    { "id": "number_of_employees_shop", "label": "How many employees are working at the shop?" },
+    { "id": "shop_address_details", "label": "What is the shop address with proof available (Yes/No)?" },
+    { "id": "working_hours_shop", "label": "What are the working hours of the establishment?" },
+    { "id": "date_of_commencement_shop", "label": "When did the business start operations?" },
+    { "id": "existing_shop_license", "label": "Is this new registration or renewal (brief)?" }
+  ],
+  "drug-license": [
+    { "id": "drug_business_type", "label": "What type of drug license is required (retail/wholesale)?" },
+    { "id": "qualified_person_available", "label": "Do you have a registered pharmacist/competent person (Yes/No)?" },
+    { "id": "premises_area_drug", "label": "What is the area of the premises (in sq ft)?" },
+    { "id": "storage_facilities", "label": "Do you have proper storage like refrigerator (Yes/No)?" },
+    { "id": "ownership_proof_drug", "label": "Do you have ownership/rent agreement of premises (Yes/No)?" },
+    { "id": "previous_license_drug", "label": "Is this new license or renewal (brief)?" }
+  ],
+  "barcode-registration": [
+    { "id": "product_count_barcode", "label": "How many products require barcodes (approximate)?" },
+    { "id": "brand_name_barcode", "label": "What is your brand name to be registered?" },
+    { "id": "company_registration_barcode", "label": "Is your business registered (Yes/No)?" },
+    { "id": "product_categories_barcode", "label": "What type of products will use barcodes?" },
+    { "id": "global_selling_intent", "label": "Do you plan to sell products internationally (Yes/No)?" },
+    { "id": "existing_gs1_status", "label": "Have you applied for GS1 before (Yes/No)?" }
+  ],
+  "bis-registration": [
+    { "id": "product_category_bis", "label": "What product requires BIS certification?" },
+    { "id": "manufacturing_location", "label": "Where is the product manufactured (India/foreign)?" },
+    { "id": "mandatory_or_voluntary", "label": "Is BIS mandatory for your product (Yes/No/Not sure)?" },
+    { "id": "test_reports_available", "label": "Do you have product test reports (Yes/No)?" },
+    { "id": "factory_details_bis", "label": "Provide factory details and address?" },
+    { "id": "existing_bis_status", "label": "Have you applied for BIS earlier (Yes/No)?" }
+  ],
+  "apeda-registration": [
+    { "id": "product_export_type", "label": "What agricultural products will you export?" },
+    { "id": "iec_available_apeda", "label": "Do you have IEC code already (Yes/No)?" },
+    { "id": "business_structure_apeda", "label": "What is your business structure?" },
+    { "id": "export_countries", "label": "Which countries are you targeting for export?" },
+    { "id": "processing_unit_details", "label": "Do you have a processing/packaging unit (Yes/No)?" },
+    { "id": "existing_apeda_status", "label": "Have you registered with APEDA before (Yes/No)?" }
+  ],
+  "professional-tax-registration": [
+    { "id": "state_pt_registration", "label": "In which state are you applying for professional tax?" },
+    { "id": "employee_count_pt", "label": "How many employees are employed?" },
+    { "id": "business_structure_pt", "label": "What is your business structure?" },
+    { "id": "salary_brackets_pt", "label": "What are the employee salary brackets (approximate)?" },
+    { "id": "existing_pt_number", "label": "Do you already have PT registration (Yes/No)?" },
+    { "id": "return_filing_support_pt", "label": "Do you need help with PT returns (Yes/No)?" }
+  ],
+  "rmc-registration": [
+    { "id": "export_product_type_rmc", "label": "What products are you exporting?" },
+    { "id": "export_promotion_council", "label": "Which export promotion council applies to your business?" },
+    { "id": "iec_status_rmc", "label": "Do you have IEC code (Yes/No)?" },
+    { "id": "business_details_rmc", "label": "Provide business registration details?" },
+    { "id": "export_history", "label": "Have you already started exporting (Yes/No)?" },
+    { "id": "rmc_requirement_reason", "label": "Why do you need RCMC (brief)?" }
+  ],
+  "halal-license-certification": [
+    { "id": "product_type_halal", "label": "What products require Halal certification?" },
+    { "id": "manufacturing_process_details", "label": "Describe the manufacturing process briefly?" },
+    { "id": "ingredient_sources", "label": "Are all ingredients Halal compliant (Yes/No/Not sure)?" },
+    { "id": "facility_inspection_ready", "label": "Is your facility ready for inspection (Yes/No)?" },
+    { "id": "existing_halal_status", "label": "Have you applied for Halal certification earlier (Yes/No)?" },
+    { "id": "target_market_halal", "label": "Which markets require Halal certification?" }
+  ],
+  "icegate-registration": [
+    { "id": "iec_available_icegate", "label": "Do you have IEC code already (Yes/No)?" },
+    { "id": "business_type_icegate", "label": "What is your business type (importer/exporter/custom broker)?" },
+    { "id": "authorized_signatory_icegate", "label": "Who will be the authorized signatory?" },
+    { "id": "bank_account_linking", "label": "Do you want to link bank account for customs payments (Yes/No)?" },
+    { "id": "dgft_registration_icegate", "label": "Are you registered on DGFT portal (Yes/No)?" },
+    { "id": "existing_icegate_id", "label": "Do you already have ICEGATE ID (Yes/No)?" }
+  ],
+  "legal-entity-identifier-code": [
+    { "id": "entity_type_lei", "label": "What type of entity is applying for LEI?" },
+    { "id": "purpose_lei", "label": "Why do you need LEI (loan, RBI compliance, etc.)?" },
+    { "id": "pan_and_registration_docs", "label": "Do you have PAN and incorporation documents (Yes/No)?" },
+    { "id": "authorized_signatory_lei", "label": "Who will be the authorized signatory?" },
+    { "id": "bank_requirement_lei", "label": "Which bank or authority requested LEI?" },
+    { "id": "existing_lei_status", "label": "Is this new LEI or renewal (brief)?" }
+  ],
+  "darpan-registration": [
+    { "id": "ngo_type_darpan", "label": "Is your entity a trust, society, or Section 8 company?" },
+    { "id": "ngo_pan_available", "label": "Do you have PAN of the NGO (Yes/No)?" },
+    { "id": "key_person_details_darpan", "label": "Provide details of key office bearers?" },
+    { "id": "registration_certificate_darpan", "label": "Do you have registration certificate (Yes/No)?" },
+    { "id": "activity_details_darpan", "label": "What activities does your NGO perform?" },
+    { "id": "existing_darpan_id", "label": "Do you already have Darpan ID (Yes/No)?" }
+  ],
+  "certificate-incumbency": [
+    { "id": "company_name_incumbency", "label": "What is the company name and country of incorporation?" },
+    { "id": "purpose_incumbency", "label": "Why do you need certificate of incumbency?" },
+    { "id": "director_details_incumbency", "label": "Provide current directors/shareholders details?" },
+    { "id": "incorporation_documents_available", "label": "Do you have incorporation documents (Yes/No)?" },
+    { "id": "issuing_authority_requirement", "label": "Which authority requires this certificate?" },
+    { "id": "timeline_incumbency", "label": "By when do you need the certificate?" }
+  ],
+  "tn-rera-registration-agents": [
+    { "id": "applicant_type_rera", "label": "Are you applying as individual or company?" },
+    { "id": "real_estate_experience", "label": "Do you have prior real estate experience (Yes/No + brief)?" },
+    { "id": "pan_and_aadhaar_rera", "label": "Do you have PAN and Aadhaar ready (Yes/No)?" },
+    { "id": "business_address_rera", "label": "What is your business address?" },
+    { "id": "criminal_background_check", "label": "Do you have any criminal record (Yes/No)?" },
+    { "id": "previous_rera_registration", "label": "Have you registered under RERA before (Yes/No)?" }
+  ]
+}

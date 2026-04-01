@@ -1,0 +1,66 @@
+{
+  "trademark-registration": [
+    { "id": "brand_name_trademark", "label": "What is the exact brand name/logo you want to register?" },
+    { "id": "business_activity_class", "label": "What goods/services does your brand cover (brief description)?" },
+    { "id": "existing_usage_status", "label": "Are you already using the trademark in business (Yes/No + since when)?" },
+    { "id": "logo_or_word_mark", "label": "Do you want to register a word mark, logo, or both?" },
+    { "id": "applicant_details_trademark", "label": "Who will own the trademark (individual/company/LLP)?" },
+    { "id": "prior_search_done", "label": "Have you checked for similar trademarks already (Yes/No)?" }
+  ],
+  "trademark-objection": [
+    { "id": "application_number_objection", "label": "What is your trademark application number?" },
+    { "id": "objection_reason", "label": "What is the objection reason mentioned in the examination report?" },
+    { "id": "reply_deadline", "label": "By when do you need to file the objection reply (date if known)?" },
+    { "id": "usage_proof_available", "label": "Do you have proof of trademark usage (Yes/No)?" },
+    { "id": "supporting_documents", "label": "Do you have documents like invoices/ads showing usage (Yes/No)?" },
+    { "id": "previous_reply_status", "label": "Have you already submitted any reply earlier (Yes/No)?" }
+  ],
+  "trademark-opposition": [
+    { "id": "application_number_opposition", "label": "What is the trademark application number under opposition?" },
+    { "id": "opposition_filed_by", "label": "Who has filed the opposition (if known)?" },
+    { "id": "grounds_of_opposition", "label": "What are the grounds mentioned in the opposition notice?" },
+    { "id": "counter_statement_deadline", "label": "When is the deadline to file counter statement?" },
+    { "id": "usage_evidence_available", "label": "Do you have evidence of prior use (Yes/No)?" },
+    { "id": "legal_support_needed", "label": "Do you need full representation for hearings (Yes/No)?" }
+  ],
+  "trademark-renewal": [
+    { "id": "trademark_number_renewal", "label": "What is your registered trademark number?" },
+    { "id": "expiry_date_trademark", "label": "What is the expiry date of the trademark (approximate)?" },
+    { "id": "owner_details_renewal", "label": "Has there been any change in ownership details (Yes/No)?" },
+    { "id": "usage_status_renewal", "label": "Is the trademark actively in use (Yes/No)?" },
+    { "id": "late_renewal_case", "label": "Has the renewal deadline already passed (Yes/No)?" },
+    { "id": "documents_ready_renewal", "label": "Do you have registration certificate copy (Yes/No)?" }
+  ],
+  "copyright-registration": [
+    { "id": "type_of_work", "label": "What type of work do you want to copyright (software, content, music, etc.)?" },
+    { "id": "author_details", "label": "Who is the original author/creator of the work?" },
+    { "id": "ownership_of_work", "label": "Who will own the copyright (individual/company)?" },
+    { "id": "publication_status", "label": "Is the work published or unpublished (brief)?" },
+    { "id": "copy_of_work_available", "label": "Do you have a copy of the work ready for submission (Yes/No)?" },
+    { "id": "date_of_creation", "label": "When was the work created (approximate date)?" }
+  ],
+  "patent-registration": [
+    { "id": "invention_description", "label": "Describe your invention in simple terms (what problem it solves)?" },
+    { "id": "novelty_check_status", "label": "Have you checked if similar inventions already exist (Yes/No)?" },
+    { "id": "stage_of_invention", "label": "What stage is your invention at (idea/prototype/market-ready)?" },
+    { "id": "inventor_details", "label": "Who are the inventors (names and count)?" },
+    { "id": "technical_documents_available", "label": "Do you have drawings/specifications prepared (Yes/No)?" },
+    { "id": "country_of_filing", "label": "Do you want patent protection only in India or internationally?" }
+  ],
+  "design-registration": [
+    { "id": "product_design_description", "label": "What product design do you want to register (brief)?" },
+    { "id": "novelty_of_design", "label": "Is the design new and not disclosed publicly (Yes/No)?" },
+    { "id": "design_images_available", "label": "Do you have clear images/drawings of the design (Yes/No)?" },
+    { "id": "article_category_design", "label": "What type of article/product uses this design?" },
+    { "id": "creator_details_design", "label": "Who created the design (individual/company)?" },
+    { "id": "prior_publication_design", "label": "Has the design been published or used before (Yes/No)?" }
+  ],
+  "logo-designing": [
+    { "id": "brand_name_logo", "label": "What is your brand/company name for the logo?" },
+    { "id": "business_type_logo", "label": "What does your business do (brief)?" },
+    { "id": "design_style_preference", "label": "What style do you prefer (modern/minimal/traditional, etc.)?" },
+    { "id": "color_preferences_logo", "label": "Do you have preferred colors or themes (Yes/No + brief)?" },
+    { "id": "reference_examples", "label": "Do you have any reference logos you like (Yes/No)?" },
+    { "id": "usage_of_logo", "label": "Where will the logo be used (website, packaging, social media, etc.)?" }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "income-tax-filing": [
+    { "id": "taxpayer_type_itr", "label": "What type of taxpayer are you (salaried, freelancer, etc.)?" },
+    { "id": "financial_year_itr", "label": "For which financial year do you want to file ITR?" },
+    { "id": "income_sources_itr", "label": "What are your income sources (salary, business, capital gains, etc.)?" },
+    { "id": "form16_or_docs_available", "label": "Do you have Form 16 or income documents ready (Yes/No)?" },
+    { "id": "deductions_claim_itr", "label": "Do you want to claim deductions (80C, 80D, etc.) (Yes/No + brief)?" },
+    { "id": "previous_itr_filing_status", "label": "Have you filed ITR for previous years (Yes/No)?" }
+  ],
+  "business-tax-filing": [
+    { "id": "business_type_itr", "label": "What is your business structure (proprietor/LLP/firm)?" },
+    { "id": "financial_year_business_itr", "label": "For which financial year is filing required?" },
+    { "id": "turnover_business_itr", "label": "What is your annual turnover (approximate)?" },
+    { "id": "books_of_accounts_status", "label": "Do you maintain books of accounts (Yes/No)?" },
+    { "id": "audit_applicability", "label": "Is tax audit applicable (Yes/No/Not sure)?" },
+    { "id": "previous_filing_business", "label": "Have you filed business ITR previously (Yes/No)?" }
+  ],
+  "company-itr-filing": [
+    { "id": "company_pan", "label": "What is the company PAN?" },
+    { "id": "financial_year_company_itr", "label": "For which financial year is ITR filing required?" },
+    { "id": "turnover_company_itr", "label": "What is the company turnover (approximate)?" },
+    { "id": "audit_report_status", "label": "Is audit completed and report available (Yes/No)?" },
+    { "id": "previous_itr_company", "label": "Have previous year returns been filed (Yes/No)?" },
+    { "id": "any_pending_compliances", "label": "Are there any pending compliances or notices (Yes/No + brief)?" }
+  ],
+  "tds-return-filing": [
+    { "id": "tan_number_tds", "label": "What is your TAN?" },
+    { "id": "tds_return_type", "label": "Which TDS return type (24Q, 26Q, etc.) is required?" },
+    { "id": "quarter_for_tds", "label": "For which quarter is the TDS return to be filed?" },
+    { "id": "tds_deduction_details", "label": "Have TDS deductions been made and data prepared (Yes/No)?" },
+    { "id": "previous_tds_filing_status", "label": "Have previous TDS returns been filed (Yes/No)?" },
+    { "id": "late_filing_tds", "label": "Is there any delay or penalty applicable (Yes/No/Not sure)?" }
+  ],
+  "income-tax-notice-handling": [
+    { "id": "pan_notice", "label": "What is your PAN?" },
+    { "id": "notice_section", "label": "Under which section is the notice issued (if known)?" },
+    { "id": "notice_date", "label": "What is the date of the notice?" },
+    { "id": "response_deadline_itr", "label": "What is the response deadline mentioned?" },
+    { "id": "documents_available_notice_itr", "label": "Do you have supporting documents ready (Yes/No)?" },
+    { "id": "previous_response_itr", "label": "Have you already responded to this notice (Yes/No)?" }
+  ],
+  "revised-itr-return": [
+    { "id": "pan_revised_itr", "label": "What is your PAN?" },
+    { "id": "financial_year_revised", "label": "For which financial year do you want to revise ITR?" },
+    { "id": "reason_for_revision", "label": "Why do you want to revise the return (brief)?" },
+    { "id": "original_itr_filed", "label": "Was the original ITR already filed (Yes/No)?" },
+    { "id": "additional_income_or_correction", "label": "What changes are needed (income/deductions/details)?" },
+    { "id": "deadline_check_revised", "label": "Are you within the allowed time limit for revision (Yes/No/Not sure)?" }
+  ],
+  "15ca-15cb-filing": [
+    { "id": "remitter_details", "label": "Who is making the foreign remittance (name/entity type)?" },
+    { "id": "remittance_amount", "label": "What is the amount being remitted (approximate)?" },
+    { "id": "purpose_of_remittance", "label": "What is the purpose of remittance (services, royalty, etc.)?" },
+    { "id": "country_of_remittance", "label": "Which country is the payment being sent to?" },
+    { "id": "form_15cb_requirement", "label": "Do you know if Form 15CB (CA certificate) is required (Yes/No/Not sure)?" },
+    { "id": "agreement_or_invoice_available", "label": "Do you have invoice/agreement for the remittance (Yes/No)?" }
+  ]
+}

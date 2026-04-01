@@ -222,5 +222,6 @@ export const footerBottomLinks = [
   { label: 'Privacy Policy', href: '/privacy' },
   { label: 'Terms & Conditions', href: '/terms' },
   { label: 'Refund Policy', href: '/refund' },
+  { label: 'Shipping & Delivery', href: '/shipping' },
   { label: 'Support', href: '/contact' },
 ];

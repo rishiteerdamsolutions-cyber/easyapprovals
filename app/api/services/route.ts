@@ -5,6 +5,12 @@ import { isValidObjectId } from '@/lib/validators';
 import { applyExcelPricingToService } from '@/lib/excel-pricing';
 
 export const dynamic = 'force-dynamic';
+/** Cold MongoDB connections on Vercel can exceed the default 10s on Hobby. */
+export const maxDuration = 30;
+
+function toJsonSafe<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value)) as T;
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -27,11 +33,22 @@ export async function GET(request: NextRequest) {
       .sort({ name: 1 })
       .lean();
 
-    return NextResponse.json(
-      services.map((service) => applyExcelPricingToService(service))
-    );
+    const payload = services.map((service) => {
+      try {
+        return toJsonSafe(applyExcelPricingToService(service));
+      } catch (rowErr) {
+        console.error('Services row map error:', rowErr, service?.slug);
+        return toJsonSafe(service);
+      }
+    });
+
+    return NextResponse.json(payload);
   } catch (error) {
-    console.error('Services API error:', error);
+    console.error(
+      'Services API error:',
+      error,
+      error instanceof Error ? error.stack : undefined
+    );
     const errMsg = error instanceof Error ? error.message : '';
     let message = 'Failed to fetch services';
     if (errMsg.includes('MONGODB_URI')) {

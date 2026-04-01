@@ -7,13 +7,15 @@ interface MongooseCache {
   promise: Promise<typeof mongoose> | null;
 }
 
-declare global {
-  var mongoose: MongooseCache | undefined;
-}
+const globalForMongoose = globalThis as typeof globalThis & {
+  __easyapprovalMongoose?: MongooseCache;
+};
 
-const cached: MongooseCache = global.mongoose ?? { conn: null, promise: null };
-if (!global.mongoose) {
-  global.mongoose = cached;
+const cached: MongooseCache =
+  globalForMongoose.__easyapprovalMongoose ?? { conn: null, promise: null };
+
+if (!globalForMongoose.__easyapprovalMongoose) {
+  globalForMongoose.__easyapprovalMongoose = cached;
 }
 
 async function connectDB(): Promise<typeof mongoose> {

@@ -10,62 +10,23 @@ import {
 } from '@/lib/order-intake-questions';
 import OrderIntakeModal from '@/components/order/OrderIntakeModal';
 import { getCheckoutUnitTotal } from '@/lib/service-pricing-display';
-import { ShoppingCart, Loader2 } from 'lucide-react';
+import {
+  loadCartFromStorage,
+  persistCart,
+  markCartMutatedThisSession,
+  markPricingConfirmedThisSession,
+  mustRefreshCartBeforeCheckout,
+  shouldShowCartPriceUpdatePrompt,
+  refreshCartPricingFromServer,
+  CART_CHANGE_EVENT,
+  type CartLineForPricing,
+} from '@/lib/cart-pricing';
+import { ShoppingCart, Loader2, RefreshCw } from 'lucide-react';
 
-const CART_STORAGE_KEY = 'easyapproval_cart';
 const INTAKE_STORAGE_KEY = 'easyapproval_cart_intake';
 const LEAD_SENT_STORAGE_KEY = 'easyapproval_cart_lead_sent';
 
-interface CartItem {
-  _id: string;
-  serviceId: string;
-  serviceName: string;
-  categoryName: string;
-  price: number;
-  /** Per unit, incl. GST and fee breakdown (matches public pricing). */
-  lineUnitTotal: number;
-  qty: number;
-  total: number;
-  professionalFee?: number;
-  isQuoteService?: boolean;
-  serviceSlug: string;
-}
-
-function normalizeCartItem(raw: Record<string, unknown>): CartItem {
-  const serviceId = String(raw.serviceId ?? raw._id ?? '');
-  const qty = Math.max(1, Number(raw.qty) || 1);
-  const price = Number(raw.price) || 0;
-  const lineUnitTotal =
-    raw.lineUnitTotal != null && !Number.isNaN(Number(raw.lineUnitTotal))
-      ? Number(raw.lineUnitTotal)
-      : price;
-  const slug = typeof raw.serviceSlug === 'string' && raw.serviceSlug.trim() ? raw.serviceSlug.trim() : 'unknown';
-  const total = Number(raw.total) || lineUnitTotal * qty;
-  return {
-    _id: String(raw._id ?? serviceId),
-    serviceId,
-    serviceName: String(raw.serviceName ?? ''),
-    categoryName: String(raw.categoryName ?? ''),
-    price,
-    lineUnitTotal,
-    qty,
-    total,
-    professionalFee: raw.professionalFee != null ? Number(raw.professionalFee) : undefined,
-    isQuoteService: raw.isQuoteService === true,
-    serviceSlug: slug,
-  };
-}
-
-function loadCartNormalized(): CartItem[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    const stored = localStorage.getItem(CART_STORAGE_KEY);
-    const arr = stored ? JSON.parse(stored) : [];
-    return Array.isArray(arr) ? arr.map((r) => normalizeCartItem(r as Record<string, unknown>)) : [];
-  } catch {
-    return [];
-  }
-}
+type CartItem = CartLineForPricing;
 
 function loadIntakeRaw(): {
   answers: Record<string, Record<string, string>>;
@@ -154,11 +115,11 @@ function OrderSelectContent() {
   const [intakeModalServiceId, setIntakeModalServiceId] = useState<string | null>(null);
   const [intakeModalSubmitting, setIntakeModalSubmitting] = useState(false);
   const [leadSentMap, setLeadSentMap] = useState<Record<string, boolean>>({});
+  const [pricingRefreshing, setPricingRefreshing] = useState(false);
   const cartHydratedRef = useRef(false);
 
   const saveCart = useCallback((items: CartItem[]) => {
-    if (typeof window === 'undefined') return;
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+    persistCart(items);
   }, []);
 
   useEffect(() => {
@@ -203,7 +164,7 @@ function OrderSelectContent() {
   }, [leadSentMap, intakeReady]);
 
   useEffect(() => {
-    const items = loadCartNormalized();
+    const items = loadCartFromStorage();
     setCart(items);
     const raw = loadIntakeRaw();
     const picked = pickIntakeForCart(items, raw.answers, raw.notes);
@@ -222,6 +183,18 @@ function OrderSelectContent() {
     }
     cartHydratedRef.current = true;
     setIntakeReady(true);
+  }, []);
+
+  useEffect(() => {
+    function onCartExternalChange() {
+      setCart(loadCartFromStorage());
+    }
+    window.addEventListener(CART_CHANGE_EVENT, onCartExternalChange);
+    window.addEventListener('storage', onCartExternalChange);
+    return () => {
+      window.removeEventListener(CART_CHANGE_EVENT, onCartExternalChange);
+      window.removeEventListener('storage', onCartExternalChange);
+    };
   }, []);
 
   useEffect(() => {
@@ -310,9 +283,8 @@ function OrderSelectContent() {
             serviceSlug: typeof service.slug === 'string' && service.slug ? service.slug : 'unknown',
           };
           const next = [...prev, item];
-          if (typeof window !== 'undefined') {
-            localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(next));
-          }
+          persistCart(next);
+          markCartMutatedThisSession();
           setIntakeModalServiceId(sid);
           return next;
         });
@@ -336,6 +308,7 @@ function OrderSelectContent() {
       const next = cart.filter((c) => c.serviceId !== service._id);
       setCart(next);
       saveCart(next);
+      markCartMutatedThisSession();
     } else {
       const pf = service.professionalFee ?? service.serviceCharge ?? 0;
       const lineUnitTotal = getCheckoutUnitTotal({
@@ -363,6 +336,7 @@ function OrderSelectContent() {
       const next = [...cart, item];
       setCart(next);
       saveCart(next);
+      markCartMutatedThisSession();
       setIntakeModalServiceId(service._id);
     }
   };
@@ -377,6 +351,7 @@ function OrderSelectContent() {
     });
     setCart(next);
     saveCart(next);
+    markCartMutatedThisSession();
   };
 
   const isInCart = (serviceId: string) => cart.some((c) => c.serviceId === serviceId);
@@ -393,6 +368,9 @@ function OrderSelectContent() {
 
   const cartWithoutAnyOther = cart.filter((c) => !cartItemIsQuote(c));
   const grandTotal = cartWithoutAnyOther.reduce((sum, c) => sum + c.total, 0);
+
+  const showPriceUpdatePrompt = shouldShowCartPriceUpdatePrompt(cart.length > 0);
+  const checkoutBlockedByStaleCart = mustRefreshCartBeforeCheckout(cartWithoutAnyOther.length > 0);
 
   const paidIntakeComplete =
     cartWithoutAnyOther.length > 0 &&
@@ -463,6 +441,7 @@ function OrderSelectContent() {
         const next = cart.filter((c) => c.serviceId !== id);
         setCart(next);
         saveCart(next);
+        markCartMutatedThisSession();
         setIntakeAnswers((prev) => {
           const n = { ...prev };
           delete n[id];
@@ -482,10 +461,32 @@ function OrderSelectContent() {
     }
   };
 
+  const handleRefreshCartPrices = async () => {
+    if (cart.length === 0) return;
+    setPricingRefreshing(true);
+    try {
+      const { cart: next, errors } = await refreshCartPricingFromServer(cart);
+      setCart(next);
+      persistCart(next);
+      markPricingConfirmedThisSession();
+      if (errors.length) {
+        alert(errors.join('\n'));
+      }
+    } finally {
+      setPricingRefreshing(false);
+    }
+  };
+
   const handleGenerateOrder = async () => {
     const toOrder = cart.filter((c) => !cartItemIsQuote(c));
     if (toOrder.length === 0) {
       alert('Please add at least one paid service to create an order.');
+      return;
+    }
+    if (mustRefreshCartBeforeCheckout(toOrder.length > 0)) {
+      alert(
+        'Your cart was saved from an earlier visit. Click “Update now” below the cart (or in the header) to refresh prices from the website, then continue to checkout.'
+      );
       return;
     }
     if (!paidIntakeComplete) {
@@ -553,10 +554,10 @@ function OrderSelectContent() {
         return next;
       });
       if (remaining.length > 0) {
-        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(remaining));
+        persistCart(remaining);
         setCart(remaining);
       } else {
-        localStorage.removeItem(CART_STORAGE_KEY);
+        persistCart([]);
         setCart([]);
       }
       router.push(`/order/${data._id}/payment`);
@@ -586,6 +587,16 @@ function OrderSelectContent() {
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Select Services</h1>
           <p className="text-xl text-gray-600">Choose services and proceed to checkout</p>
+          {showPriceUpdatePrompt && (
+            <div
+              className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950"
+              role="status"
+            >
+              <span className="font-semibold">Price update available.</span>{' '}
+              Use <span className="font-medium">Update now</span> in your cart (or the header) so your totals match
+              current prices before checkout.
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
@@ -681,6 +692,28 @@ function OrderSelectContent() {
                 <ShoppingCart className="h-5 w-5" />
                 Cart ({cart.length})
               </h2>
+              {showPriceUpdatePrompt && (
+                <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
+                  <p className="font-semibold">Update available</p>
+                  <p className="mt-1 text-amber-900/90">
+                    Sync your cart with the latest prices on the site. Required before checkout if you continued a cart
+                    from an earlier visit without adding items this time.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleRefreshCartPrices}
+                    disabled={pricingRefreshing}
+                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-amber-600 px-3 py-2 text-sm font-semibold text-white hover:bg-amber-700 disabled:opacity-60"
+                  >
+                    {pricingRefreshing ? (
+                      <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                    ) : (
+                      <RefreshCw className="h-4 w-4" aria-hidden />
+                    )}
+                    Update now
+                  </button>
+                </div>
+              )}
               {cart.length === 0 ? (
                 <p className="text-gray-500 text-sm">No services selected</p>
               ) : (
@@ -739,11 +772,23 @@ function OrderSelectContent() {
                   <button
                     type="button"
                     onClick={() => setShowCheckout(true)}
-                    disabled={cartWithoutAnyOther.length === 0 || !paidIntakeComplete}
+                    disabled={
+                      cartWithoutAnyOther.length === 0 || !paidIntakeComplete || checkoutBlockedByStaleCart
+                    }
+                    title={
+                      checkoutBlockedByStaleCart
+                        ? 'Refresh cart prices with Update now before checkout'
+                        : undefined
+                    }
                     className="w-full bg-primary-600 text-white py-3 rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Generate Order
                   </button>
+                  {checkoutBlockedByStaleCart && (
+                    <p className="mt-2 text-center text-xs text-amber-800">
+                      Click <span className="font-semibold">Update now</span> above to refresh prices, then continue.
+                    </p>
+                  )}
                 </>
               )}
             </div>
@@ -817,6 +862,12 @@ function OrderSelectContent() {
                     placeholder="10-digit mobile"
                   />
                 </div>
+                {checkoutBlockedByStaleCart && (
+                  <p className="text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                    Click <span className="font-semibold">Update now</span> on the order page (cart sidebar or site
+                    header) to refresh prices before creating your order.
+                  </p>
+                )}
               </div>
               <div className="flex gap-3 mt-6">
                 <button
@@ -827,7 +878,7 @@ function OrderSelectContent() {
                 </button>
                 <button
                   onClick={handleGenerateOrder}
-                  disabled={submitting}
+                  disabled={submitting || checkoutBlockedByStaleCart}
                   className="flex-1 bg-primary-600 text-white py-2 rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}

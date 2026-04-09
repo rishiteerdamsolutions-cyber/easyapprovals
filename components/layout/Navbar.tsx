@@ -8,11 +8,11 @@ import {
   X,
   User,
   LogOut,
-  ShoppingBag,
   MapPinned,
   LogIn,
 } from 'lucide-react';
 import MegaMenu from './MegaMenu';
+import CartOrderNav from './CartOrderNav';
 
 const navTooltipClass =
   'pointer-events-none absolute left-1/2 top-full z-[60] mt-2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-900 px-2.5 py-1 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100';
@@ -72,12 +72,7 @@ export default function Navbar() {
 
           {/* Desktop: Right side */}
           <div className="hidden md:flex items-center gap-1">
-            <Link href="/order" className={iconNavBtnClass} aria-label="Order services">
-              <ShoppingBag className="h-5 w-5 shrink-0" aria-hidden />
-              <span className={navTooltipClass} role="tooltip">
-                Order
-              </span>
-            </Link>
+            <CartOrderNav />
             <Link href="/track" className={iconNavBtnClass} aria-label="Track order">
               <MapPinned className="h-5 w-5 shrink-0" aria-hidden />
               <span className={navTooltipClass} role="tooltip">
@@ -151,13 +146,9 @@ export default function Navbar() {
           <div className="md:hidden py-4 border-t border-gray-200">
             <MegaMenu isMobile onLinkClick={() => setIsMenuOpen(false)} />
             <div className="mt-4 pt-4 border-t border-gray-200 space-y-2">
-              <Link
-                href="/order"
-                className="block py-2 text-gray-700 hover:text-primary-600 font-medium"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Order
-              </Link>
+              <div className="py-1">
+                <CartOrderNav layout="stacked" onNavigate={() => setIsMenuOpen(false)} />
+              </div>
               <Link
                 href="/track"
                 className="block py-2 text-gray-700 hover:text-primary-600"

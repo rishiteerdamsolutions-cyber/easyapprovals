@@ -20,6 +20,7 @@ export interface ServiceForTemplate {
   professionalFee?: number;
   gstPercent?: number;
   price?: number;
+  additionalCharges?: { label?: string; amount?: number }[];
   requiredDocuments?: { label?: string }[];
   processSteps?: { title: string; description?: string }[];
   benefits?: string[];
@@ -81,6 +82,7 @@ export default function ServicePageTemplate({ service, city, subpage, variation 
               professionalFee={service.professionalFee ?? 0}
               gstPercent={service.gstPercent ?? 18}
               price={service.price ?? 0}
+              additionalCharges={service.additionalCharges}
               serviceId={service._id ? String(service._id) : undefined}
             /></div>
             <div id="timeline"><TimelineSection processingTime={service.processingTime || ''} /></div>

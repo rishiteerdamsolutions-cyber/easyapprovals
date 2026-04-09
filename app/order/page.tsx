@@ -9,6 +9,7 @@ import {
   formatIntakeForLeadMessage,
 } from '@/lib/order-intake-questions';
 import OrderIntakeModal from '@/components/order/OrderIntakeModal';
+import { getCheckoutUnitTotal } from '@/lib/service-pricing-display';
 import { ShoppingCart, Loader2 } from 'lucide-react';
 
 const CART_STORAGE_KEY = 'easyapproval_cart';
@@ -21,6 +22,8 @@ interface CartItem {
   serviceName: string;
   categoryName: string;
   price: number;
+  /** Per unit, incl. GST and fee breakdown (matches public pricing). */
+  lineUnitTotal: number;
   qty: number;
   total: number;
   professionalFee?: number;
@@ -32,15 +35,21 @@ function normalizeCartItem(raw: Record<string, unknown>): CartItem {
   const serviceId = String(raw.serviceId ?? raw._id ?? '');
   const qty = Math.max(1, Number(raw.qty) || 1);
   const price = Number(raw.price) || 0;
+  const lineUnitTotal =
+    raw.lineUnitTotal != null && !Number.isNaN(Number(raw.lineUnitTotal))
+      ? Number(raw.lineUnitTotal)
+      : price;
   const slug = typeof raw.serviceSlug === 'string' && raw.serviceSlug.trim() ? raw.serviceSlug.trim() : 'unknown';
+  const total = Number(raw.total) || lineUnitTotal * qty;
   return {
     _id: String(raw._id ?? serviceId),
     serviceId,
     serviceName: String(raw.serviceName ?? ''),
     categoryName: String(raw.categoryName ?? ''),
     price,
+    lineUnitTotal,
     qty,
-    total: Number(raw.total) || price * qty,
+    total,
     professionalFee: raw.professionalFee != null ? Number(raw.professionalFee) : undefined,
     isQuoteService: raw.isQuoteService === true,
     serviceSlug: slug,
@@ -105,8 +114,23 @@ interface Service {
   price: number;
   professionalFee?: number;
   serviceCharge?: number;
+  governmentFee?: number;
+  gstPercent?: number;
+  additionalCharges?: { label?: string; amount?: number }[];
   categoryId: { name: string; slug: string };
   isExtraService?: boolean;
+}
+
+function listUnitTotalForService(service: Service): number {
+  return getCheckoutUnitTotal({
+    price: Number(service.price) || 0,
+    serviceCharge: Number(service.serviceCharge) || 0,
+    governmentFee: Number(service.governmentFee) || 0,
+    professionalFee: Number(service.professionalFee) || 0,
+    gstPercent: Number(service.gstPercent) || 18,
+    additionalCharges: service.additionalCharges,
+    isExtraService: service.isExtraService === true,
+  }).unitTotal;
 }
 
 function OrderSelectContent() {
@@ -263,14 +287,24 @@ function OrderSelectContent() {
           const categoryName = typeof service.categoryId === 'object' ? service.categoryId?.name || '' : '';
           const pf = service.professionalFee ?? service.serviceCharge ?? 0;
           const price = Number(service.price) || 0;
+          const lineUnitTotal = getCheckoutUnitTotal({
+            price: Number(service.price) || 0,
+            serviceCharge: Number(service.serviceCharge) || 0,
+            governmentFee: Number(service.governmentFee) || 0,
+            professionalFee: Number(service.professionalFee) || 0,
+            gstPercent: Number(service.gstPercent) || 18,
+            additionalCharges: service.additionalCharges,
+            isExtraService: service.isExtraService === true,
+          }).unitTotal;
           const item: CartItem = {
             _id: sid,
             serviceId: sid,
             serviceName: service.name,
             categoryName,
             price,
+            lineUnitTotal,
             qty: 1,
-            total: price,
+            total: lineUnitTotal,
             professionalFee: pf,
             isQuoteService: service.isExtraService === true,
             serviceSlug: typeof service.slug === 'string' && service.slug ? service.slug : 'unknown',
@@ -304,14 +338,24 @@ function OrderSelectContent() {
       saveCart(next);
     } else {
       const pf = service.professionalFee ?? service.serviceCharge ?? 0;
+      const lineUnitTotal = getCheckoutUnitTotal({
+        price: Number(service.price) || 0,
+        serviceCharge: Number(service.serviceCharge) || 0,
+        governmentFee: Number(service.governmentFee) || 0,
+        professionalFee: Number(service.professionalFee) || 0,
+        gstPercent: Number(service.gstPercent) || 18,
+        additionalCharges: service.additionalCharges,
+        isExtraService: service.isExtraService === true,
+      }).unitTotal;
       const item: CartItem = {
         _id: service._id,
         serviceId: service._id,
         serviceName: service.name,
         categoryName,
         price: service.price,
+        lineUnitTotal,
         qty: 1,
-        total: service.price,
+        total: lineUnitTotal,
         professionalFee: pf,
         isQuoteService: service.isExtraService === true,
         serviceSlug: service.slug || 'unknown',
@@ -328,7 +372,8 @@ function OrderSelectContent() {
       if (c.serviceId !== serviceId) return c;
       const newQty = Math.max(1, c.qty + delta);
       const pf = c.professionalFee ?? 0;
-      return { ...c, qty: newQty, total: c.price * newQty, professionalFee: pf };
+      const unit = c.lineUnitTotal ?? c.price;
+      return { ...c, qty: newQty, total: unit * newQty, professionalFee: pf };
     });
     setCart(next);
     saveCart(next);
@@ -595,7 +640,9 @@ function OrderSelectContent() {
                             <h3 className="font-semibold text-gray-900">{service.name}</h3>
                             <p className="text-sm text-gray-600 mt-1 line-clamp-2">{service.description}</p>
                             <div className="mt-2 text-primary-600 font-bold">
-                              {isQuoteService(service) ? 'Contact us' : formatCurrency(service.price)}
+                              {isQuoteService(service)
+                                ? 'Contact us'
+                                : formatCurrency(listUnitTotalForService(service))}
                             </div>
                           </div>
                         </div>
@@ -653,7 +700,9 @@ function OrderSelectContent() {
                           <div className="flex justify-between gap-2 font-medium text-gray-900">
                             <span className="truncate">{item.serviceName}</span>
                             <span className="text-primary-600 shrink-0">
-                              {quote ? 'Quote' : `${item.qty} × ${formatCurrency(item.price)}`}
+                              {quote
+                                ? 'Quote'
+                                : `${item.qty} × ${formatCurrency(item.lineUnitTotal ?? item.price)}`}
                             </span>
                           </div>
                           {!quote && (

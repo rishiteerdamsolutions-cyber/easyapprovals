@@ -1,3 +1,5 @@
+import { getCheckoutUnitTotal, getSubtotalExcludingGst } from '@/lib/service-pricing-display';
+
 type PricingDecision = {
   excelFee: number | null;
   isExtraService: boolean;
@@ -105,6 +107,34 @@ export function getPricingDecisionFromExcel(serviceName: string): PricingDecisio
   };
 }
 
+export function usesDatabasePricing(service: Record<string, unknown>): boolean {
+  return service.useDatabasePricing !== false;
+}
+
+function applyDatabasePricingToService<
+  T extends Record<string, unknown> & {
+    name?: string;
+    price?: number;
+    serviceCharge?: number;
+    governmentFee?: number;
+    professionalFee?: number;
+    gstPercent?: number;
+  },
+>(service: T): T & { isExtraService: boolean; displayFeeText: string } {
+  const sub = getSubtotalExcludingGst(service);
+  const isExtra = sub <= 0;
+  const { unitTotal } = getCheckoutUnitTotal({
+    ...service,
+    isExtraService: isExtra,
+  });
+
+  return {
+    ...service,
+    isExtraService: isExtra,
+    displayFeeText: isExtra ? 'Contact us' : `₹${unitTotal.toLocaleString('en-IN')}`,
+  };
+}
+
 export function applyExcelPricingToService<
   T extends Record<string, unknown> & {
     name?: string;
@@ -114,6 +144,11 @@ export function applyExcelPricingToService<
     professionalFee?: number;
   },
 >(service: T): T & { isExtraService: boolean; displayFeeText: string } {
+  const s = service as Record<string, unknown>;
+  if (usesDatabasePricing(s)) {
+    return applyDatabasePricingToService(service);
+  }
+
   const name = String(service.name || '');
   const decision = getPricingDecisionFromExcel(name);
 

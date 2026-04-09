@@ -6,6 +6,7 @@ const HERO_VIDEO_URL =
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260325_094440_a3592600-bd1e-49e5-9bce-a73662061d83.mp4";
 import Category from "@/models/Category";
 import Service from "@/models/Service";
+import { applyExcelPricingToService } from "@/lib/excel-pricing";
 
 async function getHomeData() {
   try {
@@ -14,9 +15,12 @@ async function getHomeData() {
       Category.find({ isActive: true }).sort({ name: 1 }).lean(),
       Service.find({ isActive: true }).limit(8).lean(),
     ]);
+    const priced = services.map((s) =>
+      applyExcelPricingToService(s as unknown as Record<string, unknown>)
+    );
     return {
       categories: JSON.parse(JSON.stringify(categories)),
-      services: JSON.parse(JSON.stringify(services)),
+      services: JSON.parse(JSON.stringify(priced)),
     };
   } catch {
     return { categories: [], services: [] };

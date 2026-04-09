@@ -39,6 +39,8 @@ export async function GET(request: NextRequest) {
         governmentFee: 1,
         professionalFee: 1,
         gstPercent: 1,
+        additionalCharges: 1,
+        useDatabasePricing: 1,
         categoryId: 1,
         isActive: 1,
       })

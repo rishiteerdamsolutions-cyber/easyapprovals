@@ -24,6 +24,11 @@ export interface IFAQ {
   answer: string;
 }
 
+export interface IAdditionalCharge {
+  label: string;
+  amount: number;
+}
+
 export interface IService extends Document {
   categoryId: mongoose.Types.ObjectId;
   firmId?: mongoose.Types.ObjectId;
@@ -35,6 +40,10 @@ export interface IService extends Document {
   governmentFee: number;
   professionalFee: number; // if different from serviceCharge
   gstPercent: number; // e.g. 18
+  /** Named surcharges (e.g. filing fee) shown to customers and in admin. */
+  additionalCharges: IAdditionalCharge[];
+  /** When true (default), public APIs use DB prices; when false, legacy Excel map applies. */
+  useDatabasePricing: boolean;
   requiredDocuments: IRequiredDocument[];
   processSteps: IProcessStep[];
   eligibility: string[];
@@ -81,6 +90,14 @@ const FAQSchema = new Schema<IFAQ>(
   { _id: false }
 );
 
+const AdditionalChargeSchema = new Schema<IAdditionalCharge>(
+  {
+    label: { type: String, required: true, trim: true },
+    amount: { type: Number, required: true, min: 0 },
+  },
+  { _id: false }
+);
+
 const ServiceSchema = new Schema<IService>(
   {
     categoryId: {
@@ -97,6 +114,8 @@ const ServiceSchema = new Schema<IService>(
     governmentFee: { type: Number, default: 0 },
     professionalFee: { type: Number, default: 0 },
     gstPercent: { type: Number, default: 18 },
+    additionalCharges: { type: [AdditionalChargeSchema], default: [] },
+    useDatabasePricing: { type: Boolean, default: true },
     requiredDocuments: [RequiredDocumentSchema],
     processSteps: { type: [ProcessStepSchema], default: [] },
     eligibility: { type: [String], default: [] },

@@ -7,6 +7,7 @@ import Service from '@/models/Service';
 import Article from '@/models/Article';
 import Tool from '@/models/Tool';
 import { applyExcelPricingToService } from '@/lib/excel-pricing';
+import { getCheckoutUnitTotal } from '@/lib/service-pricing-display';
 
 export const dynamic = 'force-dynamic';
 
@@ -45,7 +46,9 @@ export default async function CategoryIndexPage({
   const [rawServices, articles, tools] = await Promise.all([
     Service.find({ categoryId: category._id, isActive: true })
       .sort({ name: 1 })
-      .select('name slug description price serviceCharge governmentFee gstPercent')
+      .select(
+        'name slug description price serviceCharge governmentFee professionalFee gstPercent additionalCharges useDatabasePricing'
+      )
       .lean(),
     Article.find({
       isPublished: true,
@@ -82,12 +85,15 @@ export default async function CategoryIndexPage({
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Services</h2>
           <div className="grid gap-4 md:grid-cols-2">
             {services.map((s) => {
-              const sc = s.serviceCharge ?? 0;
-              const gf = s.governmentFee ?? 0;
-              const pf = 0;
-              const subtotal = sc + gf + pf > 0 ? sc + gf + pf : s.price;
-              const gst = Math.round(subtotal * ((s.gstPercent ?? 18) / 100));
-              const total = subtotal + gst;
+              const { unitTotal: total } = getCheckoutUnitTotal({
+                price: s.price,
+                serviceCharge: s.serviceCharge,
+                governmentFee: s.governmentFee,
+                professionalFee: s.professionalFee,
+                gstPercent: s.gstPercent,
+                additionalCharges: s.additionalCharges as { label?: string; amount?: number }[],
+                isExtraService: s.isExtraService,
+              });
               return (
                 <Link
                   key={String(s._id)}

@@ -1,4 +1,6 @@
 import { getCheckoutUnitTotal, getSubtotalExcludingGst } from '@/lib/service-pricing-display';
+import { normalizeServiceName } from '@/lib/normalize-service-name';
+import { getCachedXlsxPricingMap } from '@/lib/pricing-xlsx';
 
 type PricingDecision = {
   excelFee: number | null;
@@ -79,23 +81,25 @@ const WEBSITE_TO_EXCEL_ALIAS: Record<string, string> = {
   'trademark objection handling': 'trademark objection',
 };
 
-export function normalizeServiceName(name: string): string {
-  return name
-    .toLowerCase()
-    .replace(/\(.*?\)/g, ' ')
-    .replace(/[^a-z0-9]+/g, ' ')
-    .trim()
-    .replace(/\s+/g, ' ');
-}
+export { normalizeServiceName } from '@/lib/normalize-service-name';
 
 export function getPricingDecisionFromExcel(serviceName: string): PricingDecision {
   const normalized = normalizeServiceName(serviceName);
   const excelKey = WEBSITE_TO_EXCEL_ALIAS[normalized] || normalized;
-  const excelFee = EXCEL_FEES_BY_NORMALIZED_NAME[excelKey];
-
-  if (typeof excelFee === 'number') {
+  const xlsxMap = getCachedXlsxPricingMap();
+  const fromSheet = xlsxMap[excelKey] ?? xlsxMap[normalized];
+  if (typeof fromSheet === 'number') {
     return {
-      excelFee,
+      excelFee: fromSheet,
+      isExtraService: false,
+      matchedExcelName: excelKey,
+    };
+  }
+
+  const legacyFee = EXCEL_FEES_BY_NORMALIZED_NAME[excelKey];
+  if (typeof legacyFee === 'number') {
+    return {
+      excelFee: legacyFee,
       isExtraService: false,
       matchedExcelName: excelKey,
     };

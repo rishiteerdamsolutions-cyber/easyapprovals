@@ -485,7 +485,7 @@ function OrderSelectContent() {
     }
     if (mustRefreshCartBeforeCheckout(toOrder.length > 0)) {
       alert(
-        'Your cart was saved from an earlier visit. Click “Update now” below the cart (or in the header) to refresh prices from the website, then continue to checkout.'
+        'Your cart was saved from an earlier visit. Click “Update now” in the cart sidebar to refresh prices from the website, then continue to checkout.'
       );
       return;
     }
@@ -587,16 +587,6 @@ function OrderSelectContent() {
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Select Services</h1>
           <p className="text-xl text-gray-600">Choose services and proceed to checkout</p>
-          {showPriceUpdatePrompt && (
-            <div
-              className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950"
-              role="status"
-            >
-              <span className="font-semibold">Price update available.</span>{' '}
-              Use <span className="font-medium">Update now</span> in your cart (or the header) so your totals match
-              current prices before checkout.
-            </div>
-          )}
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
@@ -692,32 +682,32 @@ function OrderSelectContent() {
                 <ShoppingCart className="h-5 w-5" />
                 Cart ({cart.length})
               </h2>
-              {showPriceUpdatePrompt && (
-                <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
-                  <p className="font-semibold">Update available</p>
-                  <p className="mt-1 text-amber-900/90">
-                    Sync your cart with the latest prices on the site. Required before checkout if you continued a cart
-                    from an earlier visit without adding items this time.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={handleRefreshCartPrices}
-                    disabled={pricingRefreshing}
-                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-amber-600 px-3 py-2 text-sm font-semibold text-white hover:bg-amber-700 disabled:opacity-60"
-                  >
-                    {pricingRefreshing ? (
-                      <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-                    ) : (
-                      <RefreshCw className="h-4 w-4" aria-hidden />
-                    )}
-                    Update now
-                  </button>
-                </div>
-              )}
               {cart.length === 0 ? (
                 <p className="text-gray-500 text-sm">No services selected</p>
               ) : (
                 <>
+                  {showPriceUpdatePrompt && (
+                    <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
+                      <p className="font-semibold">Update available</p>
+                      <p className="mt-1 text-amber-900/90">
+                        Sync your cart with the latest prices on the site. Required before checkout if you continued a
+                        cart from an earlier visit without adding items this time.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={handleRefreshCartPrices}
+                        disabled={pricingRefreshing}
+                        className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-amber-600 px-3 py-2 text-sm font-semibold text-white hover:bg-amber-700 disabled:opacity-60"
+                      >
+                        {pricingRefreshing ? (
+                          <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                        ) : (
+                          <RefreshCw className="h-4 w-4" aria-hidden />
+                        )}
+                        Update now
+                      </button>
+                    </div>
+                  )}
                   <div className="space-y-4 mb-4 max-h-[min(70vh,32rem)] overflow-y-auto pr-1">
                     {cart.map((item) => {
                       const slug = item.serviceSlug;
@@ -864,8 +854,8 @@ function OrderSelectContent() {
                 </div>
                 {checkoutBlockedByStaleCart && (
                   <p className="text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
-                    Click <span className="font-semibold">Update now</span> on the order page (cart sidebar or site
-                    header) to refresh prices before creating your order.
+                    Click <span className="font-semibold">Update now</span> in the cart sidebar to refresh prices
+                    before creating your order.
                   </p>
                 )}
               </div>

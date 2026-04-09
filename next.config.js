@@ -5,7 +5,7 @@ const nextConfig = {
     unoptimized: true,
   },
   experimental: {
-    serverComponentsExternalPackages: ['pdf-lib'],
+    serverComponentsExternalPackages: ['pdf-lib', 'xlsx'],
   },
   async redirects() {
     return [{ source: '/services', destination: '/order', permanent: false }];

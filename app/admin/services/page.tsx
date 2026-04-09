@@ -175,9 +175,10 @@ export default function AdminServicesPage() {
         </Link>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Services &amp; pricing</h1>
         <p className="text-gray-600 mb-4 max-w-3xl">
-          Edit item price, GST %, named additional charges, and professional fees. Changes save to the
-          database and appear on the public site immediately (no redeploy). Keep &quot;Use database
-          pricing&quot; on unless you intentionally want legacy Excel-based fees.
+          When <span className="font-medium">Use database pricing</span> is off, the site uses fees from{' '}
+          <code className="text-xs bg-gray-100 px-1 rounded">public/pricing.xlsx</code> (sheet column B =
+          service name, C = fee)—the same source as the public catalog. Turn it on to use the amounts you
+          enter here (GST, extras, professional fees) and push those live immediately.
         </p>
         {message && (
           <div className="mb-4 rounded-lg border border-primary-200 bg-primary-50 px-4 py-2 text-sm text-gray-800">
@@ -234,8 +235,16 @@ export default function AdminServicesPage() {
                       step={1}
                       value={s.price}
                       onChange={(e) => updateRow(s._id, { price: num(e.target.value) })}
-                      className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                      disabled={s.useDatabasePricing === false}
+                      className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm disabled:bg-gray-100 disabled:text-gray-600"
                     />
+                    {s.useDatabasePricing === false ? (
+                      <span className="mt-1 block text-xs text-gray-500">
+                        Shown from <code className="bg-gray-100 px-0.5 rounded">pricing.xlsx</code> (same as the
+                        website). Enable database pricing above to edit here, or change{' '}
+                        <code className="bg-gray-100 px-0.5 rounded">public/pricing.xlsx</code> and redeploy.
+                      </span>
+                    ) : null}
                   </label>
                   <label className="block text-sm">
                     <span className="text-gray-600 font-medium">GST %</span>

@@ -147,7 +147,7 @@ export default function Navbar() {
             <MegaMenu isMobile onLinkClick={() => setIsMenuOpen(false)} />
             <div className="mt-4 pt-4 border-t border-gray-200 space-y-2">
               <div className="py-1">
-                <CartOrderNav layout="stacked" onNavigate={() => setIsMenuOpen(false)} />
+                <CartOrderNav variant="mobile-row" onNavigate={() => setIsMenuOpen(false)} />
               </div>
               <Link
                 href="/track"

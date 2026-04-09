@@ -2,7 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import { getAdminFromRequest } from '@/lib/jwt';
 import { isValidObjectId } from '@/lib/validators';
+import { applyExcelPricingToService } from '@/lib/excel-pricing';
 import mongoose from 'mongoose';
+
+function toJsonSafe<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value)) as T;
+}
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
@@ -56,12 +61,20 @@ export async function GET(request: NextRequest) {
 
     const catById = new Map(cats.map((c) => [String(c._id), c]));
 
-    const payload = services.map((s) => ({
-      ...s,
-      categoryId: s.categoryId
-        ? catById.get(String(s.categoryId)) ?? s.categoryId
-        : s.categoryId,
-    }));
+    const payload = services.map((s) => {
+      const shaped = {
+        ...s,
+        categoryId: s.categoryId
+          ? catById.get(String(s.categoryId)) ?? s.categoryId
+          : s.categoryId,
+      };
+      try {
+        return toJsonSafe(applyExcelPricingToService(shaped));
+      } catch (rowErr) {
+        console.error('Admin services row pricing error:', rowErr, s?.slug);
+        return toJsonSafe(shaped);
+      }
+    });
 
     return NextResponse.json(payload);
   } catch (error) {

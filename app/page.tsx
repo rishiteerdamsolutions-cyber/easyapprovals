@@ -2,6 +2,8 @@ import Link from "next/link";
 import { ArrowRight, Shield, Clock, Users } from "lucide-react";
 import connectDB from "@/lib/mongodb";
 
+export const dynamic = "force-dynamic";
+
 const HERO_VIDEO_URL =
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260325_094440_a3592600-bd1e-49e5-9bce-a73662061d83.mp4";
 import Category from "@/models/Category";
